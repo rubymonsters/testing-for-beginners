@@ -109,14 +109,14 @@ Woha.
 RSpec sees that we're calling the method `be_born_in_leap_year` and it figures
 "Ok, that must mean that the call `user.born_in_leap_year?` must return true.
 
-Such "magic" methods are another metaprogramming technique that RSpec leverages
-here. Usually they're pretty debateable, and often not a great choice. However,
+Such "magic" methods are another meta-programming technique that RSpec leverages
+here. Usually they're pretty debatable, and often not a great choice. However,
 in this case, they allow adding this very cool feature to RSpec.
 
 ## Negating matchers
 
 What if we want to specify that a user is *not* born in a leap year though?
-I.e. we want to negate our expecation?
+I.e. we want to negate our expectation?
 
 RSpec allows us to simply invert a matcher by using the method `not_to` as
 opposed to `to`:

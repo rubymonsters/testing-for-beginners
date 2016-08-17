@@ -3,7 +3,7 @@
 If you think back to the exercise to define a method `leap_year?` in the
 [Ruby for Beginners](http://ruby-for-beginners.rubymonstas.org/exercises/methods_1.html)
 book, a leap year is [defined](https://en.wikipedia.org/wiki/Leap_year#Algorithm)
-as pseudo code like so:
+in pseudo code like this:
 
 ```
 if (year is not divisible by 4) then (it is a common year)

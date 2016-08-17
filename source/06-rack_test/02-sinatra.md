@@ -302,7 +302,7 @@ Now let's have a look at the next route:
   end
 ```
 
-We can simply use all the same techniqes for the `GET /members/:name` route.
+We can simply use all the same techniques for the `GET /members/:name` route.
 Nothing new here.
 
 These specs pass, too:
@@ -557,7 +557,7 @@ end
 ```
 
 This is a trick, of course. The response status code is an `Integer`. So if we
-devide it by `100` we'll get another `Integer`, in our case `3`, with any
+divide it by `100` we'll get another `Integer`, in our case `3`, with any
 decimals cut off.
 
 We could also turn the number into a string and inspect the first character:
