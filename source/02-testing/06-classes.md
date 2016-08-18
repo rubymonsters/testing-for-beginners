@@ -120,7 +120,7 @@ Let's walk through it:
   `test_not_born_in_leap_year_when_born_in_1900`, and so on.
 
 * Now these methods set up a User object with the birthday we care about, and
-  then call `assert_false` or `assert_true` with the actual that value the method
+  then call `assert_false` or `assert_true` with the actual value that the method
   `born_in_leap_year?` returned.
 
 * The methods `assert_false` and `assert_true` just call `assert_equal`, passing
@@ -242,7 +242,7 @@ and call `run` on it whenever we define a class that inherits from `Test`.
 
 How can we do that?
 
-First of all we'd want a way to find out all subclasses that have inherited from
+First of all, we'd want a way to find out all subclasses that have inherited from
 the class `Test`. Ruby, starting with the version 3, will have a native way to
 do that with the [method `subclasses`](http://apidock.com/rails/v3.2.13/Class/subclasses).
 
