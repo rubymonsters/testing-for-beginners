@@ -4,9 +4,9 @@
 developed by the (some might say, infamous) Seattle Ruby community.
 
 It has replaced the much older, and much more clunky, original `test/unit`, a
-library that used to be included in Ruby's standard library. Nowadays Ruby
-ships with the more modern, and more extensible Minitest, so you can simply
-require it, and you're good to go, and start writing tests.
+library that used to be included in Ruby's standard library. Nowadays, Ruby
+ships with the more modern, and more extensible, Minitest, so you can simply
+require it, and you're good to go, you can start writing tests.
 
 Minitest works much like our little `Test` library. Here's an example taken
 straight from the project's

@@ -25,7 +25,7 @@ else) then you would not get this output.
 You can try this out quickly on the command line:
 
 ```
-$ ruby -r leap.rb -e "p leap_year?(1996)"
+$ ruby -r leap_year.rb -e "p leap_year?(1996)"
 true
 ```
 

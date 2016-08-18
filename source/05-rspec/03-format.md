@@ -48,7 +48,7 @@ Finished in 0.00632 seconds (files took 0.15438 seconds to load)
 That's nice. Each dot represents a test executed, and we get a pretty summary.
 For large test suites this is the most useful output format.
 
-We only have a few tests though. Let's try turning on RSpec's documentation
+We only have a few tests, though. Let's try turning on RSpec's documentation
 format by passing the command line option `--format doc`. With all
 tests passing the output will look like this:
 
@@ -69,7 +69,7 @@ Finished in 0.00398 seconds (files took 0.15358 seconds to load)
 4 examples, 0 failures
 ```
 
-That's pretty awesome, isn't it.
+That's pretty awesome, isn't it?
 
 Our test output reads like documentation, and tells exactly what behaviour we
 expect.

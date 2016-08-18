@@ -4,7 +4,7 @@ RSpec comes with a lot of well-thought-out features that allow us to write very
 descriptive, succinct, and concise tests that focus on the few things we really
 care about.
 
-So far our tests, using the most basic style, look something like this:
+So far, our tests, using the most basic style, look something like this:
 
 ```ruby
 describe User do
@@ -142,7 +142,7 @@ Now `user` is the object under test, and it is an instance of the class `User`
 which is already mentioned in the `describe` statement. So, in a way, this is
 a little repetitive.
 
-Because this is such a common pattern RSpec comes with another feature to make
+Because this is such a common pattern, RSpec comes with another feature to make
 this a little more concise, and remove this repetition: `subject`. We can use
 it like so:
 
@@ -199,7 +199,7 @@ describe User do
 end
 ```
 
-Woha.
+Whoa.
 
 Let's apply this to all of our tests. We can implement the same test case we've
 had before like this:
