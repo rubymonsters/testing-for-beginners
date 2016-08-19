@@ -1,5 +1,7 @@
 # Test Classes
 
+*Write your own little testing library*
+
 Ruby is an object-oriented programming language. So testing libraries often allow you
 to implement your tests in the form of classes.
 
@@ -31,22 +33,22 @@ if $0 == __FILE__
   class UserTest < Test
     def test_not_born_in_leap_year_when_born_in_2001
       user = User.new("Jennifer", "2001-01-01")
-      assert_false(@user.born_in_leap_year?)
+      assert_false(user.born_in_leap_year?)
     end
 
     def test_not_born_in_leap_year_when_born_in_1900
       user = User.new("Jennifer", "1900-01-01")
-      assert_false(@user.born_in_leap_year?)
+      assert_false(user.born_in_leap_year?)
     end
 
     def test_born_in_leap_year_when_born_in_2000
       user = User.new("Jennifer", "2000-01-01")
-      assert_true(@user.born_in_leap_year?)
+      assert_true(user.born_in_leap_year?)
     end
 
     def test_born_in_leap_year_when_born_in_2004
       user = User.new("Jennifer", "2004-01-01")
-      assert_true(@user.born_in_leap_year?)
+      assert_true(user.born_in_leap_year?)
     end
   end
 
@@ -54,6 +56,9 @@ if $0 == __FILE__
   test.run
 end
 ```
+
+This is pretty much exactly how almost all Ruby tests looked like, maybe, 10
+years ago. And it is still the style preferred by quite some Ruby developers.
 
 The idea here is to represent each test with a method on a class. The method
 should be as descriptive and readable as possible, and focus on the semantics,
@@ -69,9 +74,7 @@ class UserTest < Test
 What's that?
 
 The `<` operator used here refers to a concept called "inheritance". It says:
-
 *Define a new class `UserTest` and inherit all the methods from the class `Test`.*
-
 In other words `UserTest` *is* a `Test`, but it also adds some extra stuff to it.
 
 We can define the class `Test` like so, and store it to a file `test.rb`:
@@ -104,32 +107,38 @@ end
 Whoa. That's a bunch of new stuff. If you don't grasp all of this don't worry,
 it's certainly a level of Ruby knowledge you don't actually need this often.
 
-Let's walk through it:
+Let's walk through it though:
 
 * Our class `UserTest` inherits all the methods from the class `Test`. So we
-  can call the method `run` on it.
+  can call the method `run` on our instance (as in `test.run`, from above).
 
 * The method `run` looks at all the `methods` defined on this object, and selects
-  the method names that start with the string `test_`. So these must be the methods
-  that we've defined on the class `UserTest`.
+  the method names that start with the string `test_`. The `Test` class does not
+  have any such methods. So these must be the methods that we've defined on the
+  class `UserTest`.
 
 * It then, for each of these method names, calls `send` with the given method name.
   `send` calls this exact method on the object itself. That's right. `send` is
   an abstract way of calling a method: You hand it the method name you want to
-  call, and it calls that method for you. So we call all the methods `test_not_born_in_leap_year_when_born_in_2001`,
+  call, and it calls that method for you.
+
+* So we call all the methods `test_not_born_in_leap_year_when_born_in_2001`,
   `test_not_born_in_leap_year_when_born_in_1900`, and so on.
 
-* Now these methods set up a User object with the birthday we care about, and
-  then call `assert_false` or `assert_true` with the actual value that the method
+* Now these methods set up a `User` object with the birthday we care about, and
+  then call `assert_false` or `assert_true` with the actual that value the method
   `born_in_leap_year?` returned.
 
 * The methods `assert_false` and `assert_true` just call `assert_equal`, passing
-  the expected value, and the actual value they received.
+  the expected value (`true` or `false`), and the actual value they received from
+  the test method.
 
 Pretty cool.
 
-However, we're now missing some important information. If you try breaking
-the first test by changing `2001` to `2000` in the birthday (not the method
+## Adding the test method name
+
+However, we're now missing some important information. If you try breaking the
+first test by changing `2001` to `2000` in the birthday date (not the method
 name), and run the output you'll see:
 
 ```
@@ -179,9 +188,14 @@ test.rb:4:in `run'
 user.rb:40:in `<main>'
 ```
 
-Ok! So the backtrace that Ruby returns to us when we call `caller` includes
-the method name that we are after. All we have to do is filter this array for
-a line that includes `test_`, and then extract the method name from that line:
+Ok, great!
+
+So the backtrace that Ruby returns to us when we call `caller` includes the
+method name that we are after: the test method that has, at some point in the
+past, called the current method `assert_equal`.
+
+All we have to do is filter this array for a line that includes `test_`, and
+then extract the method name from that line:
 
 
 ```ruby
@@ -202,14 +216,15 @@ end
 
 If the code `line =~ /(test_.*)'/ && $1` on the second line looks confusing to
 you, this is a regular expression that grabs the method name from the line in
-the backtrace:
+the backtrace. The expression says:
 
-The expression says "Find a string that starts with `test_`, and then include
-all characters until you find a single quote `'`. Grab all these characters
-including `test_`, but do not include the single quote.
+"Find a string that starts with `test_`, and then include all characters until
+you find a single quote `'`. Grab all these characters including `test_`, but
+do not include the single quote."
 
-The special variable `$1` will then include the characters matched by the
-regular expression.
+Ruby's special variable `$1` will then include the characters grabbed by the
+regular expression. (The correct term would be "captured". This is everything
+between the round parentheses inside the regular expression).
 
 And with this change we've got our method names back, even though we didn't
 have to pass them to our assertion methods in each of our tests:
@@ -221,9 +236,13 @@ test_born_in_leap_year_when_born_in_2000 true is true as expected.
 test_born_in_leap_year_when_born_in_2004 true is true as expected.
 ```
 
-Testing libraries come, essentially, with code like this. They define classes
-and methods that make it easy for you to, as much as possible, focus on what
-you want to test, and not to bother with the question how to write these tests.
+Testing libraries come, essentially, with code like this.
+
+They define classes and methods that make it easy for you to, as much as
+possible, focus on what you want to test, and not to bother with the question
+how to write these tests.
+
+## Autorun
 
 Let's make one more tiny improvement, similar to what such testing libraries do:
 
@@ -242,11 +261,10 @@ and call `run` on it whenever we define a class that inherits from `Test`.
 
 How can we do that?
 
-First of all, we'd want a way to find out all subclasses that have inherited from
-the class `Test`. Ruby, starting with the version 3, will have a native way to
-do that with the [method `subclasses`](http://apidock.com/rails/v3.2.13/Class/subclasses).
+First of all we'd want a way to find out all subclasses that have inherited from
+the class `Test`. Rails adds a way to do that with the [method `subclasses`](http://apidock.com/rails/v3.2.13/Class/subclasses).
 
-In earlier versions of Ruby, we need to add this ourselves:
+Not using Rails though we need to add this ourselves:
 
 ```ruby
 class Test
@@ -287,15 +305,17 @@ end
 ```
 
 The method `at_exit` takes a block that is called an "exit hook". I.e. we tell
-Ruby to (right before Ruby terminates the program, and "exits") execute the
-block that we've hooked up.
+Ruby to execute the block that we've hooked up right before Ruby terminates the
+program, and "exits".
 
 In this block we take each of the subclasses of the class `Test` (in our case
 that is going to be just one class, the class `UserTest`), instantiate it,
 and call `run` on the instance.
 
-Pretty neat. We've essentially implemented a really small, but actually useful
-testing library ourselves, with just 45 lines of Ruby.
+Pretty neat.
+
+We've essentially implemented a really small, but actually useful testing
+library ourselves, with just 45 lines of Ruby.
 
 Let's look at some real world testing libraries next.
 

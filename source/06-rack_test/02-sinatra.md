@@ -85,7 +85,11 @@ Finished in 0.00052 seconds (files took 0.6769 seconds to load)
 1 example, 0 failures
 ```
 
-Of course we haven't implemented any actual test, yet. So let's do that next.
+Of course we haven't implemented any actual test, yet.
+
+So let's do that next.
+
+## Taking notes first
 
 Let's start adding tests in the order that the [exercise](http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html)
 specified.
@@ -150,10 +154,10 @@ Does this make sense? We've basically formulated the specification from
 as RSpec test stubs.
 
 You can see how we're using nested `context` blocks here for the first time.
-This allows us to group our tests for the two cases of submitting a valid or
-invalid name.
+This allows us to group our tests for the three cases of submitting a valid,
+duplicate, or empty name.
 
-If we run this, RSpec will tell us we have 15 "pending" tests to fill in:
+If we run this, RSpec will tell us we have 19 "pending" tests to fill in:
 
 ```
 rspec -I . app_spec.rb
@@ -179,6 +183,15 @@ Finished in 0.0018 seconds (files took 0.59211 seconds to load)
 Cool.
 
 Let's start filling them in.
+
+## Adding test implementation
+
+Since Sinatra uses Rack under the hood we can apply all the techniques we've
+learned while writing tests for our Rack app.
+
+We can create a new application instance with `App.new`, and make requests
+using the `Rack::Test` helper methods `get`, `post`, and so on. These methods
+will return a response object that we can inspect in our tests:
 
 ```ruby
 require "spec_helper"
@@ -229,14 +242,17 @@ However, our test for the HTML tags is a little brittle. A test is brittle when
 it breaks too easily. It's not robust enough.
 
 In our case our specification says that there needs to be list of links that
-show the name, and link to the right path. However, our test would pass if
+show the name, and link to the right path. However, our test would fail if
 we would, for example, add a CSS class to the links, so we can style them
-more easily. Or if we'd add any other HTML attributes to it.
+more easily. Or if we'd add any other HTML attributes to it. Because we simply
+compare the full HTML tag as a string.
 
 Our app would then still function the same, and comply with the specification.
 But our test would break. That's called a brittle test.
 
 So what do we do?
+
+## HaveTag matcher
 
 One option would be to use a regular expression, like so:
 
@@ -389,16 +405,25 @@ These tests read as if they should pass, don't they? We think they do.
 
 Except, they don't.
 
+## Leaking state
+
 When we run these tests something curious happens. At first the second test
-(testing the status 302) passes, and the first one does not. From then on,
+(testing the status `302`) passes, and the first one does not. From then on,
 when we re-run the tests, the first one passes, and the second one doesn't.
 
 Why's that? This is a common problem in testing. Programmers say that "tests
 leak state". By that they mean that there is something that persists state
-(data), and this state is modified in our tests. Now whenever we run our tests
-the state persisted in one test can influence the next test. Thus, it leaks.
+(data), this state is modified when we run our tests, and our tests rely on it.
+Now whenever we run our tests the state persisted in one test can influence the
+next test. Thus, it leaks.
 
-In our case this is the file `members.txt` of course.
+In our case this is the file `members.txt` of course. More precisely, our tests
+rely on the assumption that the name `Monsta` is not in the persistent file
+`members.text`.
+
+But when we run our tests the first test that executes will add it, and save
+the file. All other tests from then on run against a *different* persistent
+state than the first one. That is bad.
 
 We can fix that by resetting the contents of the file `members.txt` to the
 same state before or after each test run. Let's do that:
@@ -417,11 +442,18 @@ same state before or after each test run. Let's do that:
 I.e. for each of our tests, before RSpec runs it, it will execute the `before`
 block first, and write the same content to the file.
 
+This is an important concept in testing: You want your tests to always run
+against the same state. If anything is persisted, e.g. in our file, in a
+database, or anywhere else, we need to apply extra measures to make sure
+this state is reset everytime we run a single test.
+
 Cool. When we now run the tests we still get a failure. Our first test still
 does not pass. However, we now get the same failure no matter how often we run
 it.
 
 So what's wrong with the first test?
+
+## Side effects
 
 If you think about it, we run the actual `POST` request in the `let(:response)`
 statement. And so far, all of our tests have somehow used the `response`.
@@ -431,8 +463,10 @@ results.
 However, this one test now does not use `response` at all. It looks at the file
 contents instead. In programming, this is called a [side effect](http://programmers.stackexchange.com/questions/40297/what-is-a-side-effect).
 We test something that is not returned from the method call that we need to
-execute. And our test accidentally revealed that we're testing a side effect
-here.
+execute, and therefore our test happens to not make that method call at all.
+You could also say that our test happens to reveal that we're testing a side
+effect here. In this way tests can be diagnostic, and tell us things about
+our code that we haven't noticed before.
 
 In web applications side effects are expected: we do want to store (persist)
 some data in our text file, or in the database. However, it is also good to
@@ -464,15 +498,21 @@ Finished in 0.04476 seconds (files took 0.64694 seconds to load)
 2 examples, 0 failures
 ```
 
-However, calling `response` in this place seems kind of weird. It does not
-really convey that all we want to do is make the `POST` request here.
+However, calling `response` in this place seems kind of weird, does it not? We
+don't actually use the response object here. And the line does not really
+convey that all we want to do is make the `POST` request here.
 
-So what's an alternative. RSpec has another variation of the `let` method that
-makes this more visible: `let!`.
+So what's an alternative?
+
+## Let!
+
+RSpec has another variation of the `let` method that makes this more visible:
+`let!`.
 
 `let!` is useful in exactly such situations: We need to evaluate the
-`response`, and we want to mark this as a side effect. The same line then also
-hints that we're making a `POST` request.
+`response`, because we need to tests a side effect. And we want to mark this as
+an exceptional thing. The same line then also hints that we're making a `POST`
+request.
 
 That seems like a good compromise, let's use it:
 
@@ -493,6 +533,8 @@ That seems like a good compromise, let's use it:
 
 Ok, this looks great. Our tests pass, and we're using another nice RSpec
 feature.
+
+## Custom matchers
 
 What's next? What about our redirect test? It would be nice if we could use a
 matcher for that:
@@ -516,16 +558,22 @@ end
 ```
 
 Looks alright? We compare the actual response status to 302, and we compare the
-response header `Location` to a URL that has our path. What's with the
-`example.org` business though? As mentioned at some point in the Webapps for
-Beginners book, a redirect header needs to be a full URL as per the HTTP
-specification. So our Sinatra app turns the path into a full URL. Since we
-haven't specified any other hostname in our app it just adds this fantasy
-domain.
+response header `Location` to a URL that has our path.
 
-This, again, is a brittle. What if we configure a proper hostname for our
-app at some point? Our tests then would fail, even though it would function as
-expected.
+What's with the `example.org` business though? As mentioned at some point in
+the Webapps for Beginners book, a redirect header needs to be a full URL as per
+the HTTP specification. So our Sinatra app turns the path into a full URL.
+Since we haven't specified any other hostname in our app it just adds this
+fantasy domain name.
+
+This works, the given test would pass.
+
+Can you spot a problem with it though?
+
+Our matcher, again, is a brittle. What if we configure a proper hostname for
+our app at some point? Our tests then would fail, even though the application
+code would function as expected. Our tests would be too brittle, and fail when
+they should pass.
 
 Let's fix that, and parse the URL, so we can compare the path only:
 
@@ -542,9 +590,10 @@ end
 
 Now, that's much better.
 
-Another aspect that is a little brittle, too, is that we test for a very specific
-status code. According to the HTTP specification all status codes that start with
-a 3 are considered [redirects](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection).
+There's one more aspect that is a little brittle, too: we test for a very
+specific status code. According to the HTTP specification all status codes that
+start with a `3` are considered [redirects](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection).
+
 So let's fix that, too.
 
 ```ruby
@@ -589,6 +638,8 @@ Finished in 0.039 seconds (files took 0.69768 seconds to load)
 ```
 
 It does! Very nice.
+
+## Shared examples
 
 Let's fill in the tests for the next case, posting a duplicate name. We can
 mostly steal from the tests we've already written for the `GET /members/new`
@@ -635,8 +686,6 @@ Let's move our tests from the last context to a shared example group like so:
 
 ```ruby
     shared_examples_for "invalid member data" do
-      let!(:response) { post "/members", :name => "Maren" }
-
       it "does not add the name to the members.txt file" do
         expect(file).to eq "Anja\nMaren"
       end
@@ -664,10 +713,12 @@ member data:
     end
 
     context "given a duplicate name" do
+      let!(:response) { post "/members", :name => "Maren" }
       include_examples "invalid member data"
     end
 
     context "given an empty name" do
+      let!(:response) { post "/members", :name => "" }
       include_examples "invalid member data"
     end
 ```

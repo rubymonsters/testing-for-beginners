@@ -13,11 +13,16 @@ user = User.new("Francisca", "2000-01-01")
 expect(user.born_in_leap_year?).to eq true
 ```
 
-What does `expect` do, exactly? And what's the deal with `to` and `eq`?
+What does `expect` do, exactly? And what's the deal with `to` and `eq` (equal)?
 
 These also are methods that RSpec defines for us, so we can describe our
 expectations in a readable way. That is to say, these methods are RSpec's equivalent to
 assertions (`assert` and friends) in Minitest.
+
+Some people feel they read much better than Minitest's assertion methods
+(`assert_equal(one, other)`), because they express more clearly, what's the
+actual value, how to compare, and what's the expected value. Almost like
+an English sentence.
 
 Technically, `expect` returns an object that responds to the method `to`. This
 method `to` expects to be passed an object that is a so-called matcher. It will
@@ -30,13 +35,20 @@ could just as well add them:
 expect(user.born_in_leap_year?).to(eq(true))
 ```
 
+Or we could make more visible what the matcher is (if we wanted):
+
+```ruby
+match = eq(true)
+expect(user.born_in_leap_year?).to(match)
+```
+
 The method `eq` returns an RSpec matcher that simply tests if the object passed
 to `expect` is equal to the object passed to `eq`. This may sound more
 complicated than it is.
 
 If you have a look at the [documentation](https://relishapp.com/rspec/rspec-expectations/v/3-5/docs/built-in-matchers)
 there are lots and lots of matchers pre-defined, and RSpec makes it easy to
-define your own matchers, too.
+define your own matchers, too (we'll get to that later).
 
 For example:
 
@@ -51,8 +63,9 @@ and, for example, `eq` or `start_with` works: the purpose is to allow for
 code that kinda reads like an English sentence. You'll get used to these pretty soon, once
 you've started writing some RSpec tests.
 
-Essentially, you start with `expect(whatever_thing_to_test).to`, and then you find
-a matcher that works. `eq` is always a good start. So you end up with:
+Just try to remember that (or look it up here), essentially, you start with
+`expect(whatever_thing_to_test).to`, and then you find a matcher that works.
+`eq` always is a good start. So you end up with:
 
 ```ruby
 expect(whatever_thing_to_test).to eq whatever_you_expect
@@ -107,7 +120,7 @@ expect(user).to be_born_in_leap_year
 Whoa.
 
 RSpec sees that we're calling the method `be_born_in_leap_year` and it figures
-"Ok, that must mean that the call `user.born_in_leap_year?` must return true.
+"Ok, that must mean that the call `user.born_in_leap_year?` must return true."
 
 Such "magic" methods are another meta-programming technique that RSpec leverages
 here. Usually they're pretty debatable, and often not a great choice. However,
@@ -130,7 +143,7 @@ This works for all other matchers, too, of course - and `to_not` can be used int
 
 ```ruby
   expect(1).to eq 1
-  expect(2).not_to eq 3
+  expect(2).not_to eq 1
 
   expect(true).to be true
   expect(false).not_to be true
@@ -146,8 +159,11 @@ And so on.
 
 ## Simple expectations
 
-If all this matcher business seems too complicated to you for now, you can also
-always fall back to simply comparing actual and expected values like so:
+If all this matcher business seems too complicated to you don't worry. You're
+not the first programmer feeling that way.
+
+For now you can always fall back to simply comparing actual and expected values
+like so:
 
 ```ruby
 user = User.new("Francisca", "2000-01-01")

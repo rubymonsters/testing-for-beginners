@@ -42,9 +42,12 @@ As you see we keep repeating the setup in the first line of every test.
 Wouldn't it be nice to move this to a shared place, like Minitest's `setup`
 method?
 
-RSpec calls this feature `before`. This is just another method that RSpec
-defines, and it takes a block, too. RSpec will call (execute) this block before
-each of the tests (examples):
+## Before
+
+RSpec has the same feature, but it calls it `before`.
+
+This is just another method that RSpec defines, and it takes a block, too.
+RSpec will call (execute) this block before each one of the tests (examples):
 
 
 ```ruby
@@ -66,16 +69,21 @@ end
 ```
 
 Our `before` block sets up an instance variable `@user` so that our test then
-can use it.
+can use it. That's cool.
 
 However, we now have a problem: The hard coded birthday is specific to the first
 context, and should be different for each one of our contexts, because that's
 the one single piece of data that changes. The second test would use the wrong
-year, and therefore fail.
+year, and therefore fail, because it would use a user that is actually born in
+`2000`, not `2001`, despite what the context desciption tells.
 
-RSpec comes with another feature to help with this: `let` allows us to define
-such bits of data that need to be specified per context. Here's how that looks
-like:
+So how do we fix that?
+
+## Let
+
+RSpec comes with another feature to help with this: the method `let` allows us
+to define such bits of data (or more precisely, objects) that need to be
+specified per context. Here's how that looks like:
 
 
 ```ruby
@@ -131,12 +139,15 @@ describe User do
 end
 ```
 
-This is a pretty common way of writing RSpec tests. The `let(:user)` statement
-defines the `user`, and as you can see, this statement is common to both
-contexts: they both use `user`.
+This actually is a pretty common way of writing RSpec tests.
+
+The `let(:user)` statement defines the `user`, and as you can see, this
+statement is common to both contexts: they both use `user`.
 
 The `let(:year)` statements however, are specific to the contexts, and define
 the `year` for each one of the contexts.
+
+## Subject and Should
 
 Now `user` is the object under test, and it is an instance of the class `User`
 which is already mentioned in the `describe` statement. So, in a way, this is
@@ -179,8 +190,12 @@ end
 ```
 
 This works great. And we've reduced the amount of code we have to type by
-a great deal. However, what's with the duplication in the `it` message,
-and the actual code that implements our expectation?
+a great deal.
+
+However, what's with the duplication in the `it` message, and the actual code
+that implements our expectation?
+
+## Anonymous it
 
 The lines `it "is born in a leap year"` and `should be_born_in_leap_year`
 pretty much describe the same thing, don't they?
@@ -201,8 +216,10 @@ end
 
 Whoa.
 
-Let's apply this to all of our tests. We can implement the same test case we've
-had before like this:
+Let's apply this to all of our tests.
+
+We can implement the same test case we've had before (at the beginning of this
+chapter) like this, using all the advanced features we've just learned:
 
 ```ruby
 describe User do
@@ -230,6 +247,8 @@ describe User do
 end
 ```
 
+You decide which one you like better.
+
 The output will look a wee bit different, but just as readable, even though we
 haven't written out the extra description on the `it` block:
 
@@ -254,8 +273,12 @@ To summarize, the extra features used are:
 
 * `let` allows you to dynamically define a method that will return the given
   value. We use this to define the only varying bit of data: the `year`.
+  It is important to note that `let` memoizes the result. I.e. it only calls
+  the block once. Also, it only executes the block when you actually call it.
 * `subject` is a convenience helper that lets us specify the "thing" that
-  is under test. In our case that's a `User` instance.
+  is under test. In our case that's a `User` instance. `subject` also memoizes
+  the result. And just like `let`, it also only executes the block when you
+  actually call it.
 * `should` assumes that we want to test the `subject`. It is a shorthand for
   `expect(subject).to` (while `should_not` is the corresponding shorthand for
   `expect(subject).not_to`).
@@ -264,9 +287,10 @@ This style lets us reduce the amount of code that we need to type (and read)
 significantly.
 
 The first version ("basic style") of our tests had 715 characters on 29 lines.
-This new version has 474 characters on 23 lines. That's a massive reduction,
-and allows us to focus much more on the relevant differences.
+This new version has 474 characters on 23 lines. That's a massive reduction
+(~30% less characters to type and read), and allows us to focus much more on
+the relevant differences.
 
 However, it also requires for us to learn these RSpec features, and get
-familiar with how to implement such tests properly.
+familiar with how to implement and understand such tests properly.
 

@@ -63,11 +63,11 @@ domain of HTTP, i.e. writing web applications?
 RSpec is a DSL for the problem domain of writing tests (or "specifications").
 
 While Sinatra defines methods such as `get`, `post`, `status`, `redirect`, and
-so on, RSpec defines methods like `describe`, `it`, and `expect`.
+so on, RSpec defines methods like `describe`, `it`, `expect`, and `eq` (equal).
 
-Using these methods you can describe your expectations about your code, and
+Using these methods we can describe our expectations about our code, and
 execute them. In RSpec's thinking, that's what tests are all about: expressing
-your expectations about the behaviour of your code. We *describe* the class
+our expectations about the behaviour of our code. We *describe* the class
 `User`, and specify our expectations.
 
 Instead of `it` you can also use `example`. That's exactly the same:
@@ -136,9 +136,9 @@ structure for your tests. There needs to be at least one top level `describe`
 block. This is the equivalent to defining a class that inherits from
 `Minitest::Test`.
 
-The method `it` (or its alias `example`) is then used to add the actual tests,
-i.e. that's the equivalent to defining methods that start with `test_` in
-Minitest.
+The method `it` (or one of its alias `example` and `specify`) is then used to
+add the actual tests, i.e. that's the equivalent to defining methods that start
+with `test_` in Minitest.
 
 Under the hood RSpec uses a lot of [metaprogramming](http://rubylearning.com/blog/2010/11/23/dont-know-metaprogramming-in-ruby/).
 I.e. RSpec has methods that, when called, define code, classes and methods,
@@ -205,4 +205,4 @@ rspec ./user_spec.rb:23 # User born in 2000 is born in a leap year
 ```
 
 Wow, that's pretty comprehensive. RSpec tells us exactly what's going wrong,
-and where.
+and where. So nice of them.
