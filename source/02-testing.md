@@ -6,7 +6,7 @@ expected, output.
 
 Tests are extra code that you write alongside your code. You use this extra code
 to exercise, and test, your actual code, i.e. the code you really care about.
-So you could also say that tests are meta code: code that sole purpose is to
+So you could also say that tests are meta code: code whose sole purpose is to
 test other code.
 
 That sounds more complicated than it actually is.

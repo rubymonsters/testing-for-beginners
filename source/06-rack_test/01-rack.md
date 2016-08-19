@@ -211,7 +211,7 @@ end
 ```
 
 As you see we've moved the `let(:app)` statement one level up so it can be
-shared amongst both contexts. the `let(:response)` statement on the other
+shared among both contexts. the `let(:response)` statement on the other
 hand is different for both contexts, so we kept them there.
 
 Again, this passes:

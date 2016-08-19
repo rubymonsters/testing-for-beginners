@@ -5,7 +5,7 @@ the most basic one first.
 
 RSpec wants us to define tests in a file that ends with `_spec.rb`, so we store
 both our class and our test in the file `user_spec.rb`. Normally, in modern
-codebases, you'd store your code in one file, and your tests in another file:
+code bases, you'd store your code in one file, and your tests in another file:
 
 ```ruby
 require "date"
@@ -132,7 +132,7 @@ Nice, isn't it? Our spec says: "A user, in the context of being born in 2000,
 is born in a leap year", and then "[in the same context] is at voting age".
 
 In short the methods `describe` and `context` are used to set up a logical
-structure for your tests. There needs to be at least one toplevel `describe`
+structure for your tests. There needs to be at least one top level `describe`
 block. This is the equivalent to defining a class that inherits from
 `Minitest::Test`.
 
@@ -149,7 +149,7 @@ your tests.
 
 That means, even though you're very familiar with Ruby, you'll still need to
 learn RSpec in order to use it effectively. That's one of the reasons why some
-Ruby developers dislike RSpec: It's not "just Ruby" any more. On the flipside,
+Ruby developers dislike RSpec: It's not "just Ruby" any more. On the flip side,
 it's extremely powerful, and comes with features that no other testing library
 has.
 
@@ -166,8 +166,8 @@ Finished in 0.00204 seconds (files took 0.1559 seconds to load)
 
 The dot indicates that there is exactly one test defined. RSpec calls tests
 "examples". That's because they like to stress that tests shouldn't be so much
-about technical details, but about the behaviour that the user cares about.
-They like to say that we "specify" behaviour by the way of defining
+about technical details, but about the behavior that the user cares about.
+They like to say that we "specify" behavior by the way of defining
 "examples".
 
 Let's break our test, and change the method `born_in_leap_year?` to always

@@ -101,7 +101,7 @@ class Test
 end
 ```
 
-Woha. That's a bunch of new stuff. If you don't grasp all of this don't worry,
+Whoa. That's a bunch of new stuff. If you don't grasp all of this don't worry,
 it's certainly a level of Ruby knowledge you don't actually need this often.
 
 Let's walk through it:
@@ -149,7 +149,7 @@ So how can we fix that?
 We've previously passed in an identifier to `assert_equal` by calling
 something like `assert_equal(expected, actual, "born_in_leap_year? for a User born on #{date}")`.
 
-However, that requires us to type a lot of code everytime we want to call any
+However, that requires us to type a lot of code every time we want to call any
 of our assertion methods.
 
 Luckily, Ruby allows us to grab the so called backtrace at any point in our

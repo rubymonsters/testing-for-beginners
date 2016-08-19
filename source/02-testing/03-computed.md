@@ -1,6 +1,6 @@
 # Computed tests
 
-What if you have lots and lots of methods on lots of classes, and you want to
+What if you have lots and lots of methods in lots of classes, and you want to
 make changes to them? You'd need to output a lot of things, and inspect them
 very carefully in order to not miss any mistakes.
 
@@ -9,7 +9,7 @@ outputs `false` for the first two years, and `true` for the last two ones.
 That's a lot of knowledge to keep in mind for just one method. Imagine you'd
 have hundreds of methods. You'd need to very carefully inspect a lot of output.
 
-Isn't that what computers are there for? Doing all the tedius, mechanical work
+Isn't that what computers are there for? Doing all the tedious, mechanical work
 for us that requires a lot of precision?
 
 Let's see. What if we, instead of outputting plain values to the terminal, also
@@ -48,7 +48,7 @@ leap_year?(2000) returned true as expected.
 leap_year?(2004) returned true as expected.
 ```
 
-Lets try breaking our method by always returning `true`:
+Let's try breaking our method by always returning `true`:
 
 ```ruby
 def leap_year?(year)
@@ -67,5 +67,4 @@ leap_year?(2004) returned true as expected.
 
 That's much better, isn't it? Even if you'd have hundreds of tests (many
 real-world applications do have thousands) it would be pretty easy to spot
-any broken behaviour, right?
-
+any broken behavior, right?

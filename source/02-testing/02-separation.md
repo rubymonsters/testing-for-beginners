@@ -1,6 +1,6 @@
 # Separating test code
 
-Here's one trick that has been used a lot in early days of Ruby development:
+Here's one trick that has been used a lot in the early days of Ruby development:
 
 ```ruby
 def leap_year?(year)
@@ -48,15 +48,15 @@ other languages that existed when Matz designed Ruby in the 90s, especially
 Perl, in this case.
 
 The variable `$0` is a global variable (hence the dollar sign `$`) that holds
-the name of the Ruby file that was given on the command line, as in `ruby
-leap_year.rb`.
+the name of the Ruby file that was given on the command line. So if you run
+`ruby leap_year.rb`, then `$0` will contain `"leap_year.rb"`
 
-The varialbe `__FILE__` on the other hand is defined in every Ruby file, and
+The variable `__FILE__` on the other hand is defined in every Ruby file, and
 contains the file name of this exact file. If we execute `ruby leap_year.rb`
 then these two names will be the same. If we execute any other ruby code that
 requires the file `leap_year.rb` though, then they will not be the same.
 
-We can further improve our test code by making it less repititive, and abstract
+We can further improve our test code by making it less repetitive, and abstract
 it:
 
 ```ruby
@@ -72,4 +72,4 @@ end
 ```
 
 Exercise: Try going to back to the [Ruby for Beginners](http://ruby-for-beginners.rubymonstas.org/)
-book and add some tests to some of the exercises you made.
+book and add some tests to some of the exercises you did.

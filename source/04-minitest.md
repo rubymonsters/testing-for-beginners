@@ -1,16 +1,17 @@
 # Minitest
 
 [Minitest](https://github.com/seattlerb/minitest) is a library that has been
-developed by the (some might say, infamous) Settle Ruby community.
+developed by the (some might say, infamous) Seattle Ruby community.
 
-It has replaced the much older, and much more clunky original `test/unit`, a
+It has replaced the much older, and much more clunky, original `test/unit`, a
 library that used to be included in Ruby's standard library. Nowadays Ruby
 ships with the more modern, and more extensible Minitest, so you can simply
 require it, and you're good to go, and start writing tests.
 
-Minitest works much like our little `Test` library. Here's their synopsis
-from their [README](https://github.com/seattlerb/minitest#synopsis), a little
-reduced.
+Minitest works much like our little `Test` library. Here's an example taken
+straight from the project's
+[README](https://github.com/seattlerb/minitest#synopsis), I've only shortened it
+a bit.
 
 Given that you'd like to test the following class:
 
@@ -42,7 +43,7 @@ class TestMeme < Minitest::Test
 end
 ```
 
-As you can see there's a method `setup`. This method will be called before each
+As you can see there's a method called `setup`. This method will be called before each
 of the test methods. This makes sense if you think about the [stages](/testing/stages.html)
 that tests usually include: you want setup to be run first, before each of the
 tests.
