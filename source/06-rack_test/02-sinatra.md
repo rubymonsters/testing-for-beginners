@@ -433,7 +433,7 @@ same state before or after each test run. Let's do that:
     let(:response) { post "/members", :name => "Monsta" }
     let(:file)     { File.read("members.txt") }
 
-    before { File.write("members.txt", "Anja\nMaren") }
+    before { File.write("members.txt", "Anja\nMaren\n") }
 
     # ...
   end
@@ -519,7 +519,7 @@ That seems like a good compromise, let's use it:
 ```ruby
   context "POST to /members" do
     let(:file) { File.read("members.txt") }
-    before     { File.write("members.txt", "Anja\nMaren") }
+    before     { File.write("members.txt", "Anja\nMaren\n") }
 
     context "given a valid name" do
       let!(:response) { post "/members", :name => "Monsta" }

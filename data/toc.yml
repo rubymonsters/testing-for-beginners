@@ -23,5 +23,11 @@
   children:
     - rack
     - sinatra
-- path: phantom_js
+- path: headless
   children:
+    - phantomjs
+    - capybara
+    - features
+- path: test_doubles
+  children:
+

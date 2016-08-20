@@ -1,7 +1,20 @@
 require "spec_helper"
 
+ENV['RACK_ENV'] = 'test'
+
+RSpec.configure do |config|
+  config.mock_with :rspec
+end
+
 describe App do
   let(:app) { App.new }
+  let(:filename) { "members.txt" }
+  let(:content)  { "Anja\nMaren\n" }
+
+  it "displays the member's name" do
+    expect(File).to receive(:read).with(filename).and_return(content)
+    get "/members"
+  end
 
   context "GET to /members" do
     let(:response) { get "/members" }
@@ -50,7 +63,7 @@ describe App do
 
   context "POST to /members" do
     let(:file) { File.read("members.txt") }
-    before     { File.write("members.txt", "Anja\nMaren") }
+    before     { File.write("members.txt", "Anja\nMaren\n") }
 
     context "given a valid name" do
       let!(:response) { post "/members", :name => "Monsta" }
@@ -72,7 +85,7 @@ describe App do
       let!(:response) { post "/members", :name => "Maren" }
 
       it "does not add the name to the members.txt file" do
-        expect(file).to eq "Anja\nMaren"
+        expect(file).to eq "Anja\nMaren\n"
       end
 
       it "returns status 200 OK" do

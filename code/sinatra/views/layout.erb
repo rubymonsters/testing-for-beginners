@@ -1,5 +1,8 @@
 <html>
   <body>
+    <% if @message %>
+      <p><%= @message %></p>
+    <% end %>
     <%= yield %>
   </body>
 </html>

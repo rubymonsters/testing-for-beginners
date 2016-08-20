@@ -5,6 +5,14 @@ require "member_validator"
 class App < Sinatra::Base
   FILENAME = "members.txt"
 
+  use Rack::MethodOverride
+
+  enable :sessions
+
+  before do
+    @message = session.delete(:message)
+  end
+
   get "/members" do
     @members = members
     erb :index
@@ -21,6 +29,7 @@ class App < Sinatra::Base
 
     if validator.valid?
       add_member(@member.name)
+      session[:message] = "Successfully saved the new member: #{@member.name}."
       redirect "/members/#{@member.id}"
     else
       @messages = validator.messages
@@ -45,6 +54,7 @@ class App < Sinatra::Base
 
     if validator.valid?
       update_member(params[:id], @member.name)
+      session[:message] = "Successfully updated the member: #{@member.name}."
       redirect "/members/#{@member.id}"
     else
       @messages = validator.messages
@@ -58,7 +68,8 @@ class App < Sinatra::Base
   end
 
   delete "/members/:id" do
-    remove_member(params[:id])
+    member = remove_member(params[:id])
+    session[:message] = "Successfully removed the member: #{params[:id]}."
     redirect "/members"
   end
 
@@ -76,9 +87,7 @@ class App < Sinatra::Base
   end
 
   def add_member(name)
-    File.open(FILENAME, "a+") do |file|
-      file.puts(name)
-    end
+    File.write(FILENAME, name, mode: File::WRONLY | File::APPEND | File::CREAT)
   end
 
   def update_member(id, name)
@@ -88,9 +97,7 @@ class App < Sinatra::Base
   end
 
   def store(lines)
-    File.open(FILENAME, "w+") do |file|
-      file.puts(lines.join("\n"))
-    end
+    File.write(FILENAME, lines.join("\n"), mode: File::WRONLY | File::TRUNC | File::CREAT)
   end
 
   def remove_member(name)

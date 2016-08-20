@@ -1,10 +1,11 @@
-# Phantom.js
+# Headless browsers
 
-[Phantom.js](http://phantomjs.org/) is a so called headless browser, i.e. a
-full featured browser that simply does not come with a browser window.
+A so called headless browser is a full featured browser that can be started
+on the command line, and behaves just like any other browser, but simply does
+not come with a browser window.
 
-Instead it can be used programmatically. You can write code that asks this
-browser to navigate to a certain page, click on a link, submit a form, and
+Most importantly, it can be used programmatically: You can write code that asks
+this browser to navigate to a certain page, click on a link, submit a form, and
 so on.
 
 This is cool because so far we've completely ignored that our web application
@@ -34,4 +35,5 @@ The most popular ones probably are [Selenium](http://docs.seleniumhq.org/)
 (which has become a little dusty these days), and [Phantom.js](http://phantomjs.org/)
 (which is pretty modern, and stable).
 
-So, let's have a look at Phantom.js next.
+So, let's have a look at [Phantom.js](http://phantomjs.org/) next.
+
