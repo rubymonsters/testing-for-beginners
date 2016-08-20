@@ -28,7 +28,7 @@ end
 ```
 
 We've converted the application, and included the code in our repository
-[here](https://github.com/rubymonsters/testing-for-beginners/tree/master/code/sinatra).
+[here](https://github.com/rubymonsters/testing-for-beginners/tree/main/code/sinatra).
 In order to work with it, you can clone this repository from GitHub using
 `git`, and `cd` into the directory `code/sinatra`.
 
