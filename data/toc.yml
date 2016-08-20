@@ -29,5 +29,6 @@
     - capybara
     - features
 - path: test_doubles
-  children:
+- path: analysis
+- path: services
 
