@@ -20,9 +20,17 @@ html {
   body > div { padding: 3rem 3rem 6.250rem 3rem; }
   .menu { display: block; }
   .toc { display: none; }
+  .video {
+    width: 50rem;
+    height: calc(50rem * 0.5625);
+  }
 }
 
 @media screen and (min-width: $tablet-2) {
   article > .page-nav { display: none; }
   .menu { display: none; }
+  .video {
+    width: 50rem;
+    height: calc(50rem * 0.5625);
+  }
 }

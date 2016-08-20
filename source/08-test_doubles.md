@@ -493,12 +493,14 @@ for what to test, and how. It also helps to ask more experienced developers
 about their views. Again, be prepared to get 10 different answers when you
 ask 10 different people :)
 
-One amazing talk on the differences between mocks and stubs, and when to use
-what, has been given by Katrina Owen at Railsberry in 2013. You can watch it
+Katrina Owen has given an amazing talk titled "467 tests, 0 failures, 0
+confidence"  on the differences between mocks and stubs, and when to use what,
+at Railsberry 2013. You can watch it on Vimeo
 [here](https://vimeo.com/68730418), and have a look at her slides
 [here](https://speakerdeck.com/railsberry/zero-confidence-by-katrina-owen).
-Check it out.
+Check it out:
 
+<iframe class="video" src="https://player.vimeo.com/video/68730418" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 ## Footnotes
 
