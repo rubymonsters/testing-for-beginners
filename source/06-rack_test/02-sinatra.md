@@ -34,7 +34,7 @@ In order to work with it, you can clone this repository from GitHub using
 
 You will notice that we've also extracted the class `Member` to a file
 `member.rb`, and the `MemberValidator` to a file `member_validator.rb`. These
-files are required at the top of the file `app.rb`, which is the main file, and
+files are required at the top of the file `app.rb`, which is the main file and
 defines the class `App`.  Also, there's a `config.ru` file that allows us to
 start the application separately.
 
@@ -94,8 +94,8 @@ So let's do that next.
 Let's start adding tests in the order that the [exercise](http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html)
 specified.
 
-In RSpec the method `it` can be used to write test stubs first, and mark them
-as "to be done later", by simply not adding a block, just yet. This is nice
+In RSpec, the method `it` can be used to write test stubs first and mark them
+as "to be done later", by simply not adding a block just yet. This is nice
 because it allows us to focus on what we want to test first, and then add the
 test implementation later.
 
@@ -150,7 +150,7 @@ end
 ```
 
 Does this make sense? We've basically formulated the specification from
-[exercise](http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html)
+[this exercise](http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html)
 as RSpec test stubs.
 
 You can see how we're using nested `context` blocks here for the first time.
@@ -241,8 +241,8 @@ Nice.
 However, our test for the HTML tags is a little brittle. A test is brittle when
 it breaks too easily. It's not robust enough.
 
-In our case our specification says that there needs to be list of links that
-show the name, and link to the right path. However, our test would fail if
+In our case our specification says that there needs to be a list of links that
+show the name and link to the right path. However, our test would fail if
 we would, for example, add a CSS class to the links, so we can style them
 more easily. Or if we'd add any other HTML attributes to it. Because we simply
 compare the full HTML tag as a string.
@@ -288,7 +288,7 @@ With that we could formulate our test like so:
 And leave the nitty gritty work of matching to our custom matcher.
 
 Luckily there's a gem for that: [rspec-html-matchers](https://github.com/kucaahbe/rspec-html-matchers).
-Let's try that. We need to install the gem and add it to RSpec it in our
+Let's try that. We need to install the gem and add it to RSpec in our
 `spec_helper.rb` file:
 
 ```ruby
@@ -360,7 +360,7 @@ Cool. Ok, what about the form on `/members/new`?
   end
 ```
 
-We seem to be getting the hang on this web application testing business.
+We seem to be getting the hang of this web application testing business.
 
 These specs pass, too:
 
@@ -379,7 +379,7 @@ Finished in 0.06903 seconds (files took 0.63294 seconds to load)
 4 examples, 0 failures
 ```
 
-Now the next route, `POST to /members` is going to be a little less trivial,
+Now the next route, `POST to /members`, is going to be a little less trivial,
 and we'll need to introduce a few new concepts here.
 
 Let's see.
@@ -419,7 +419,7 @@ next test. Thus, it leaks.
 
 In our case this is the file `members.txt` of course. More precisely, our tests
 rely on the assumption that the name `Monsta` is not in the persistent file
-`members.text`.
+`members.txt`.
 
 But when we run our tests the first test that executes will add it, and save
 the file. All other tests from then on run against a *different* persistent
@@ -510,7 +510,7 @@ RSpec has another variation of the `let` method that makes this more visible:
 `let!`.
 
 `let!` is useful in exactly such situations: We need to evaluate the
-`response`, because we need to tests a side effect. And we want to mark this as
+`response`, because we need to test a side effect. And we want to mark this as
 an exceptional thing. The same line then also hints that we're making a `POST`
 request.
 
@@ -769,5 +769,5 @@ The groups
 * `GET to /members/:name/edit` and `PUT to /members/:name` and
 * `GET to /members/:name/delete` and `DELETE to /members/:name`
 
-still need to be tested, and adding these tests makes an excellent exercise.
+still need to be tested, and adding these tests makes for an excellent exercise.
 

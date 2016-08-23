@@ -1,6 +1,6 @@
 # Basic Usage
 
-RSpec tests can be written in several flavors, or styles. Let's have a look at
+RSpec tests can be written in several flavors (or "styles"). Let's have a look at
 the most basic one first.
 
 RSpec wants us to define tests in a file that ends with `_spec.rb`, so we store
@@ -65,7 +65,7 @@ RSpec is a DSL for the problem domain of writing tests (or "specifications").
 While Sinatra defines methods such as `get`, `post`, `status`, `redirect`, and
 so on, RSpec defines methods like `describe`, `it`, `expect`, and `eq` (equal).
 
-Using these methods we can describe our expectations about our code, and
+Using these methods we can describe our expectations about our code and
 execute them. In RSpec's thinking, that's what tests are all about: expressing
 our expectations about the behaviour of our code. We *describe* the class
 `User`, and specify our expectations.
@@ -111,7 +111,7 @@ describe User do
 end
 ```
 
-And again, there's an alias for nested `describe` blocks: You can use `context`
+And again, there's an alias for nested `describe` blocks — you can use `context`
 there, too:
 
 ```ruby
@@ -131,7 +131,7 @@ end
 Nice, isn't it? Our spec says: "A user, in the context of being born in 2000,
 is born in a leap year", and then "[in the same context] is at voting age".
 
-In short the methods `describe` and `context` are used to set up a logical
+In short, the methods `describe` and `context` are used to set up a logical
 structure for your tests. There needs to be at least one top level `describe`
 block. This is the equivalent to defining a class that inherits from
 `Minitest::Test`.
@@ -140,8 +140,8 @@ The method `it` (or one of its alias `example` and `specify`) is then used to
 add the actual tests, i.e. that's the equivalent to defining methods that start
 with `test_` in Minitest.
 
-Under the hood RSpec uses a lot of [metaprogramming](http://rubylearning.com/blog/2010/11/23/dont-know-metaprogramming-in-ruby/).
-I.e. RSpec has methods that, when called, define code, classes and methods,
+Under the hood RSpec uses a lot of [metaprogramming](http://rubylearning.com/blog/2010/11/23/dont-know-metaprogramming-in-ruby/);
+i.e. RSpec has methods that, when called, define code, classes and methods,
 according to the arguments you pass. For example the code `describe User do ...
 end` defines a class, and methods like `context`, and `it` add more code to
 this class. RSpec then, eventually, executes this code automatically, and runs

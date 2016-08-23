@@ -15,14 +15,14 @@ rspec ./user_spec.rb:28 # User born in 2001 should not be born in leap year
 
 The bit `:28` at the end of the filename means "line 28". So this is how we can tell RSpec to
 execute one single test only, and it even outputs the command we need to run to
-the test output for our convenience. In order to re-run the test that have
-failed we can copy and paste this commands from the output.
+the test output for our convenience. In order to re-run the test that has
+failed, we can copy and paste this command from the output.
 
-That is really convenient if you have a big test suite, and your tests are
+That is really convenient if you have a big test suite and your tests are
 rather slow. So, while working on fixing a certain bug you'd only want to
 run this one failing test.
 
-You can also run groups of tests. E.g. you can run all tests in the first
+You can also run groups of tests: E.g. you can run all tests in the first
 `context` by adding the line that `context` statement sits on. In my case
 that's line `25`, so this command runs all tests in the first context:
 

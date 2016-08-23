@@ -1,7 +1,7 @@
 # Custom Matchers
 
 We've talked a bit about matchers before, and briefly mentioned that RSpec
-even allows us to define our own, custom matchers.
+even allows us to define our own custom matchers.
 
 Let's have a quick look at this.
 
@@ -91,7 +91,7 @@ If we were to execute this, RSpec would try to call the method `named?` on our
 `User` instance (just like `be_born_in_leap_year` calls `born_in_leap_year?` on
 the user), and that method does not exist. We could add that method `named?` to
 our `User` class, but we don't really want to add any such methods to our real
-code, just so we can make the tests more pretty.
+code, just so we can make the tests prettier.
 
 Instead, we can define a [custom matcher](https://www.relishapp.com/rspec/rspec-expectations/v/2-4/docs/custom-matchers/define-matcher)
 `be_named` that inspects the user's `name`:
@@ -109,8 +109,8 @@ takes another block. The actual and expected values are passed as arguments to
 the two blocks, somehow. Inside the inner block we are supposed to return
 `true` or `false` depending if the matcher is supposed to "match".
 
-Ok, well, we don't really have to understand how exactly this works in detail:
-We can just slap it at the end of our file, and run it:
+Ok, well, we don't really have to understand how exactly this works in 
+detail—we can just slap it at the end of our file, and run it:
 
 ```
 $ rspec --format doc user_spec.rb

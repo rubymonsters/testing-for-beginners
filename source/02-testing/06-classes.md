@@ -161,10 +161,10 @@ something like `assert_equal(expected, actual, "born_in_leap_year? for a User bo
 However, that requires us to type a lot of code every time we want to call any
 of our assertion methods.
 
-Luckily, Ruby allows us to grab the so called backtrace at any point in our
-code. The backtrace is the funny looking stuff that you see on any error message
+Luckily, Ruby allows us to grab the so-called backtrace at any point in our
+code. The backtrace is the funny-looking stuff that you see on any error message
 in the console. It is an array of strings that tell which methods in which
-files, and on which lines have been called so far, so we can "trace" the method
+files and on which lines have been called so far, so we can "trace" the method
 call back.
 
 The method that lets us grab this backtrace is the method `caller`. Let's try
@@ -254,7 +254,7 @@ calling `run` on it:
   test.run
 ```
 
-We've just defined a test class, and, in this context, we can be fairly certain
+We've just defined a test class and, in this context, we can be fairly certain
 that we want to run these tests, right? So not having to type these lines would
 be kinda useful. Ruby could just automatically create an instance of the class
 and call `run` on it whenever we define a class that inherits from `Test`.

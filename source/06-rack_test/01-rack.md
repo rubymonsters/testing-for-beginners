@@ -106,7 +106,7 @@ But we can also just instantiate it ourselves, and call the method `call` with
 a hash that complies to the Rack `env` conventions. E.g. in our case we'd want
 to set the `REQUEST_METHOD` and `PATH_INFO` keys.
 
-While this works well it's also a little bit of a hassle. And that's where
+While this works well, it's also a little bit of a hassle. And that's where
 Rack::Test can help.
 
 Here's how we can use Rack::Test to make our tests a little less verbose:
