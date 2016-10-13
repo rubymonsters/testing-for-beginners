@@ -2,7 +2,7 @@
 
 What if you have lots and lots of methods in lots of classes, and you want to
 make changes to them? You'd need to output a lot of things, and inspect them
-very carefully in order to not miss any mistakes.
+very carefully, in order not to miss any mistakes.
 
 In the example above you'd have to remember that your code is valid if it
 outputs `false` for the first two years, and `true` for the last two ones.
@@ -13,7 +13,7 @@ Isn't that what computers are there for? Doing all the tedious, mechanical work
 for us that requires a lot of precision?
 
 Let's see. What if we, instead of outputting plain values to the terminal, also
-output a hint if this is the value that we expected to see.
+output a hint if this is the value that we expected to see?
 
 ```ruby
 def leap_year?(year)

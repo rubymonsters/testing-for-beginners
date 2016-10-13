@@ -3,7 +3,7 @@
 [RSpec](http://rspec.info/) is a library that has caused quite a bit of debate
 in the Ruby community over the last years.
 
-Some people really love it, and use nothing else. It is very powerful, and includes
+Some people really love it and use nothing else. It is very powerful, and includes
 some very unique features. Others find it way too big, and too complicated for
 something as simple as writing some tests.
 

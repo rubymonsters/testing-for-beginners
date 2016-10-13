@@ -45,7 +45,7 @@ Finished in 0.00632 seconds (files took 0.15438 seconds to load)
 4 examples, 0 failures
 ```
 
-That's nice. Each dot represents a test executed, and we get a pretty summary.
+That's nice. Each dot represents an executed test, and we get a pretty summary.
 For large test suites this is the most useful output format.
 
 We only have a few tests, though. Let's try turning on RSpec's documentation

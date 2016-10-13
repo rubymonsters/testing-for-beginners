@@ -71,7 +71,7 @@ end
 Our `before` block sets up an instance variable `@user` so that our test then
 can use it. That's cool.
 
-However, we now have a problem: The hard coded birthday is specific to the first
+However, we now have a problem: The hard-coded birthday is specific to the first
 context, and should be different for each one of our contexts, because that's
 the one single piece of data that changes. The second test would use the wrong
 year, and therefore fail, because it would use a user that is actually born in

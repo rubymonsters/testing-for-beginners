@@ -1,6 +1,6 @@
 # Matchers
 
-We've discussed how methods such as `describe`, and `context` are used to set
+We've discussed how methods such as `describe` and `context` are used to set
 up a structure for our tests, and how `it` adds an actual test ("example") to
 it.
 
@@ -20,7 +20,7 @@ expectations in a readable way. That is to say, these methods are RSpec's equiva
 assertions (`assert` and friends) in Minitest.
 
 Some people feel they read much better than Minitest's assertion methods
-(`assert_equal(one, other)`), because they express more clearly, what's the
+(`assert_equal(one, other)`), because they express more clearly what's the
 actual value, how to compare, and what's the expected value. Almost like
 an English sentence.
 
@@ -63,7 +63,7 @@ and, for example, `eq` or `start_with` works: the purpose is to allow for
 code that kinda reads like an English sentence. You'll get used to these pretty soon, once
 you've started writing some RSpec tests.
 
-Just try to remember that (or look it up here), essentially, you start with
+Just try to remember (or look it up here) that, essentially, you start with
 `expect(whatever_thing_to_test).to`, and then you find a matcher that works.
 `eq` always is a good start. So you end up with:
 
@@ -139,7 +139,7 @@ opposed to `to`:
   expect(user).not_to be_born_in_leap_year
 ```
 
-This works for all other matchers, too, of course - and `to_not` can be used interchangeably with `not_to`:
+This works for all other matchers, too, of course — and `to_not` can be used interchangeably with `not_to`:
 
 ```ruby
   expect(1).to eq 1
@@ -159,10 +159,10 @@ And so on.
 
 ## Simple expectations
 
-If all this matcher business seems too complicated to you don't worry. You're
+If all this matcher business seems too complicated to you, don't worry. You're
 not the first programmer feeling that way.
 
-For now you can always fall back to simply comparing actual and expected values
+For now you can always fall back on comparing actual and expected values
 like so:
 
 ```ruby

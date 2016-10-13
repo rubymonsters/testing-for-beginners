@@ -45,9 +45,9 @@ method `assert_equal` could be defined somewhere else, in an external file, so
 we could reuse it in other places.
 
 You could imagine writing lots of methods, and adding tests to them so that,
-whenever you or fellow developers change something about them your tests would
+whenever you or fellow developers change something about them, your tests would
 catch any mistakes.
 
 This is pretty close to what people did in the very early days of Ruby, and
-sometimes you can still find such code, if you explore, for example, the
+sometimes you can still find such code if you explore, for example, the
 Ruby standard library code from older Ruby versions, such as 1.8.x.
