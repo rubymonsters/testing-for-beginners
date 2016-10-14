@@ -25,12 +25,12 @@ else) then you would not get this output.
 You can try this out quickly on the command line:
 
 ```
-$ ruby -r leap_year.rb -e "p leap_year?(1996)"
+$ ruby -I -r leap_year.rb -e "p leap_year?(1996)"
 true
 ```
 
-The flag `-r` tells Ruby to require your file. The flag `-e` tells it to
-execute the given code. This way you don't have to create a new file in order
+The flag `-r` tells Ruby to require your file. The flag `-I` tells it where to look in the current directory to load the file. The flag `-e` tells it to
+execute the given code.  This way you don't have to create a new file in order
 to try this out.
 
 As you can see it now won't execute your "test", and thus won't output `2004:
