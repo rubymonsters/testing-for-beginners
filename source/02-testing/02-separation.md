@@ -29,7 +29,7 @@ $ ruby -I -r leap_year.rb -e "p leap_year?(1996)"
 true
 ```
 
-The flag `-r` tells Ruby to require your file. The flag `-I` tells it where to look in the current directory to load the file. The flag `-e` tells it to
+The flag `-r` tells Ruby to require your file. The flag `-I` tells it to look in the current directory to load the file. The flag `-e` tells it to
 execute the given code.  This way you don't have to create a new file in order
 to try this out.
 
