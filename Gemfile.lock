@@ -123,6 +123,3 @@ DEPENDENCIES
   middleman-syntax (= 2.0.0)
   middleman-toc
   redcarpet
-
-BUNDLED WITH
-   1.12.5
