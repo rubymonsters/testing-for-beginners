@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Testing a Sinatra app | Testing for Beginners</title>
+
+    <link href="../assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/rack_test/rack.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/headless.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li>
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory expanded">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li class="active">
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li>
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li>
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li>
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Testing a Sinatra app</h1>
+
+<p>Let&rsquo;s go back to our Sinatra application that defined the <code>members</code> resource in our
+<a href="http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html">Webapps for Beginners</a>
+book.</p>
+
+<p>We&rsquo;ve written that app in what Sinatra calls the &ldquo;classic style&rdquo;. That means
+that we&rsquo;ve simply defined the routes in the global namespace, not using any
+class for them.</p>
+
+<p>In order to make it easy for us to test the application using Rack::Test we need
+to convert it to what Sinatra calls the &ldquo;modular style&rdquo;. This simply means that
+we require <code>sinatra/base</code> instead of <code>sinatra</code>, and then define a class that
+inherits from <code>Sinatra::Base</code>:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"sinatra/base"</span>
+
+<span class="k">class</span> <span class="nc">Application</span> <span class="o">&lt;</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">get</span> <span class="s2">"/members"</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+
+  <span class="n">get</span> <span class="s2">"/members/new"</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>We&rsquo;ve converted the application, and included the code in our repository
+<a href="https://github.com/rubymonsters/testing-for-beginners/tree/main/code/sinatra">here</a>.
+In order to work with it, you can clone this repository from GitHub using
+<code>git</code>, and <code>cd</code> into the directory <code>code/sinatra</code>.</p>
+
+<p>You will notice that we&rsquo;ve also extracted the class <code>Member</code> to a file
+<code>member.rb</code>, and the <code>MemberValidator</code> to a file <code>member_validator.rb</code>. These
+files are required at the top of the file <code>app.rb</code>, which is the main file and
+defines the class <code>App</code>.  Also, there&rsquo;s a <code>config.ru</code> file that allows us to
+start the application separately.</p>
+
+<p>This is nice, because it lets us focus better on our application code. However
+it also means that we need to tell Ruby where to look for these files. I.e. we
+have to setup the Ruby
+<a href="http://webapps-for-beginners.rubymonstas.org/libraries/load_path.html">load path</a>
+properly.</p>
+
+<p>When we use <code>ruby</code>, <code>rackup</code>, or <code>rspec</code> to load the file we can add the
+current working directory to the Ruby load path by adding the option <code>-I .</code>.
+The dot means &ldquo;this current directory&rdquo;. The option <code>-I</code> tells Ruby to look for
+files here when we use <code>require</code>.</p>
+
+<p>In order to start the application you can run <code>rackup -I .</code>.</p>
+
+<p>Ok, let&rsquo;s add some tests next.</p>
+
+<p>For that we&rsquo;ll create a separate file <code>app_spec.rb</code>. RSpec wants us to name
+files that contain tests with the suffix <code>_spec.rb</code>, and we want to keep
+our code and tests separate this time.</p>
+
+<p>We&rsquo;ve also included a file <code>spec_helper.rb</code>. In RSpec this is a common place
+to keep setup and configuration. Our spec helper doesn&rsquo;t do a lot, but it
+requires our <code>app</code>, and includes the <code>Rack::Test::Methods</code> module to our
+RSpec tests.</p>
+
+<p>So in <code>app_spec.rb</code> we&rsquo;ll want to require the <code>spec_helper</code> first, and then
+we&rsquo;re good to go, and can start writing tests:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"spec_helper"</span>
+
+<span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">it</span> <span class="s2">"works"</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>We can run our tests like this:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . app_spec.rb
+.
+
+Finished in 0.00052 seconds (files took 0.6769 seconds to load)
+1 example, 0 failures
+</code></pre>
+
+<p>Of course we haven&rsquo;t implemented any actual test, yet.</p>
+
+<p>So let&rsquo;s do that next.</p>
+
+<h2>Taking notes first</h2>
+
+<p>Let&rsquo;s start adding tests in the order that the <a href="http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html">exercise</a>
+specified.</p>
+
+<p>In RSpec, the method <code>it</code> can be used to write test stubs first and mark them
+as &ldquo;to be done later&rdquo;, by simply not adding a block just yet. This is nice
+because it allows us to focus on what we want to test first, and then add the
+test implementation later.</p>
+
+<p>We&rsquo;ll just copy the requirements from the exercise, more or less:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"spec_helper"</span>
+
+<span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="p">{</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span>
+    <span class="n">it</span> <span class="s2">"displays a list of member names that link to /members/:name"</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span>
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/new"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span>
+    <span class="n">it</span> <span class="s2">"displays a form that POSTs to /members"</span>
+    <span class="n">it</span> <span class="s2">"displays an input tag for the name"</span>
+    <span class="n">it</span> <span class="s2">"displays a submit tag"</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">"POST to /members"</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s2">"given a valid name"</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">"adds the name to the members.txt file"</span>
+      <span class="n">it</span> <span class="s2">"returns status 302 Found"</span>
+      <span class="n">it</span> <span class="s2">"redirects to /members/:name"</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">"given a duplicate name"</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">"does not add the duplicate to the members.txt file"</span>
+      <span class="n">it</span> <span class="s2">"returns status 200 OK"</span>
+      <span class="n">it</span> <span class="s2">"displays a form that POSTs to /members"</span>
+      <span class="n">it</span> <span class="s2">"displays an input tag for the name, with the value set"</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">"given an empty name"</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">"does not add the name to the members.txt file"</span>
+      <span class="n">it</span> <span class="s2">"returns status 200 OK"</span>
+      <span class="n">it</span> <span class="s2">"displays a form that POSTs to /members"</span>
+      <span class="n">it</span> <span class="s2">"displays an input tag for the name, with the value set"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Does this make sense? We&rsquo;ve basically formulated the specification from
+<a href="http://webapps-for-beginners.rubymonstas.org/exercises/sinatra_resource.html">this exercise</a>
+as RSpec test stubs.</p>
+
+<p>You can see how we&rsquo;re using nested <code>context</code> blocks here for the first time.
+This allows us to group our tests for the three cases of submitting a valid,
+duplicate, or empty name.</p>
+
+<p>If we run this, RSpec will tell us we have 19 &ldquo;pending&rdquo; tests to fill in:</p>
+<pre class="highlight plaintext"><code>rspec -I . app_spec.rb
+************
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) App GET to /members returns status 200 OK
+     # Not yet implemented
+     # ./app_spec.rb:8
+
+  [...[
+
+  19) App POST to /members given an empty name displays an input tag for the name, with the value set
+     # Not yet implemented
+     # ./app_spec.rb:41
+
+
+Finished in 0.0018 seconds (files took 0.59211 seconds to load)
+19 examples, 0 failures, 19 pending
+</code></pre>
+
+<p>Cool.</p>
+
+<p>Let&rsquo;s start filling them in.</p>
+
+<h2>Adding test implementation</h2>
+
+<p>Since Sinatra uses Rack under the hood we can apply all the techniques we&rsquo;ve
+learned while writing tests for our Rack app.</p>
+
+<p>We can create a new application instance with <code>App.new</code>, and make requests
+using the <code>Rack::Test</code> helper methods <code>get</code>, <code>post</code>, and so on. These methods
+will return a response object that we can inspect in our tests:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"spec_helper"</span>
+
+<span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="p">{</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members"</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">200</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"displays a list of member names that link to /members/:name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span>
+        <span class="s1">'&lt;a href="/members/Anja"&gt;Anja&lt;/a&gt;'</span><span class="p">,</span>
+        <span class="s1">'&lt;a href="/members/Maren"&gt;Maren&lt;/a&gt;'</span>
+      <span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span>
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Does this work? Yes it does. These tests indeed pass:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . --format doc app_spec.rb:6
+Run options: include {:locations=&gt;{"./app_spec.rb"=&gt;[6]}}
+
+App
+  GET to /members
+    returns status 200 OK
+    displays a list of member names that link to /members/:name
+
+Finished in 0.04964 seconds (files took 0.60312 seconds to load)
+2 examples, 0 failures
+</code></pre>
+
+<p>Nice.</p>
+
+<p>However, our test for the HTML tags is a little brittle. A test is brittle when
+it breaks too easily. It&rsquo;s not robust enough.</p>
+
+<p>In our case our specification says that there needs to be a list of links that
+show the name and link to the right path. However, our test would fail if
+we would, for example, add a CSS class to the links, so we can style them
+more easily. Or if we&rsquo;d add any other HTML attributes to it. Because we simply
+compare the full HTML tag as a string.</p>
+
+<p>Our app would then still function the same, and comply with the specification.
+But our test would break. That&rsquo;s called a brittle test.</p>
+
+<p>So what do we do?</p>
+
+<h2>HaveTag matcher</h2>
+
+<p>One option would be to use a regular expression, like so:</p>
+<pre class="highlight ruby"><code>    <span class="n">it</span> <span class="s2">"displays a list of member names that link to /members/:name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">%r(&lt;a.* href="/members/Anja".*&gt;Anja&lt;/a&gt;)</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">%r(&lt;a.* href="/members/Maren".*&gt;Maren&lt;/a&gt;)</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>This is cool because we can use plain Ruby, but on the other hand regular
+expressions are a little hard to read.</p>
+
+<p>We could also implement a custom matcher for this. How about <code>have_tag</code>:</p>
+<pre class="highlight ruby"><code><span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="ss">:have_tag</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span><span class="o">|</span>
+  <span class="n">match</span> <span class="k">do</span> <span class="o">|</span><span class="n">html</span><span class="o">|</span>
+    <span class="c1"># somehow figure out if `html` has the right tag.</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>With that we could formulate our test like so:</p>
+<pre class="highlight ruby"><code>    <span class="n">it</span> <span class="s2">"displays a list of member names that link to /members/:name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:a</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class="s2">"/members/Anja"</span><span class="p">,</span> <span class="ss">:text</span> <span class="o">=&gt;</span> <span class="s2">"Anja"</span><span class="p">)</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:a</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class="s2">"/members/Maren"</span><span class="p">,</span> <span class="ss">:text</span> <span class="o">=&gt;</span> <span class="s2">"Maren"</span><span class="p">)</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>And leave the nitty gritty work of matching to our custom matcher.</p>
+
+<p>Luckily there&rsquo;s a gem for that: <a href="https://github.com/kucaahbe/rspec-html-matchers">rspec-html-matchers</a>.
+Let&rsquo;s try that. We need to install the gem and add it to RSpec in our
+<code>spec_helper.rb</code> file:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"rspec-html-matchers"</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="c1"># ...</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">include</span> <span class="no">RSpecHtmlMatchers</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Ok, this works. Our test is now much less brittle, very cool.</p>
+
+<p>Now let&rsquo;s have a look at the next route:</p>
+<pre class="highlight ruby"><code>  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members/Anja"</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">200</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:p</span><span class="p">,</span> <span class="ss">:text</span> <span class="o">=&gt;</span> <span class="s2">"Name: Anja"</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>We can simply use all the same techniques for the <code>GET /members/:name</code> route.
+Nothing new here.</p>
+
+<p>These specs pass, too:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . --format doc app_spec.rb:19
+Run options: include {:locations=&gt;{"./app_spec.rb"=&gt;[19]}}
+
+App
+  GET to /members/:name
+    returns status 200 OK
+    displays the member's name
+
+Finished in 0.08506 seconds (files took 0.80809 seconds to load)
+2 examples, 0 failures
+</code></pre>
+
+<p>Cool. Ok, what about the form on <code>/members/new</code>?</p>
+<pre class="highlight ruby"><code>  <span class="n">context</span> <span class="s2">"GET to /members/new"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members/new"</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"returns status 200 OK"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">200</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"displays a form that POSTs to /members"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:form</span><span class="p">,</span> <span class="ss">:action</span> <span class="o">=&gt;</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:method</span> <span class="o">=&gt;</span> <span class="s2">"post"</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"displays an input tag for the name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:input</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="s2">"text"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"name"</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"displays a submit tag"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:input</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="s2">"submit"</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>We seem to be getting the hang of this web application testing business.</p>
+
+<p>These specs pass, too:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . --format doc app_spec.rb:31
+Run options: include {:locations=&gt;{"./app_spec.rb"=&gt;[31]}}
+
+App
+  GET to /members/new
+    returns status 200 OK
+    displays a form that POSTs to /members
+    displays an input tag for the name
+    displays a submit tag
+
+Finished in 0.06903 seconds (files took 0.63294 seconds to load)
+4 examples, 0 failures
+</code></pre>
+
+<p>Now the next route, <code>POST to /members</code>, is going to be a little less trivial,
+and we&rsquo;ll need to introduce a few new concepts here.</p>
+
+<p>Let&rsquo;s see.</p>
+<pre class="highlight ruby"><code>  <span class="n">context</span> <span class="s2">"POST to /members"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:file</span><span class="p">)</span> <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="n">context</span> <span class="s2">"given a valid name"</span> <span class="k">do</span>
+      <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">post</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Monsta"</span> <span class="p">}</span>
+
+      <span class="n">it</span> <span class="s2">"adds the name to the members.txt file"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s2">"Monsta"</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"returns status 302 Found"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">302</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>These tests read as if they should pass, don&rsquo;t they? We think they do.</p>
+
+<p>Except, they don&rsquo;t.</p>
+
+<h2>Leaking state</h2>
+
+<p>When we run these tests something curious happens. At first the second test
+(testing the status <code>302</code>) passes, and the first one does not. From then on,
+when we re-run the tests, the first one passes, and the second one doesn&rsquo;t.</p>
+
+<p>Why&rsquo;s that? This is a common problem in testing. Programmers say that &ldquo;tests
+leak state&rdquo;. By that they mean that there is something that persists state
+(data), this state is modified when we run our tests, and our tests rely on it.
+Now whenever we run our tests the state persisted in one test can influence the
+next test. Thus, it leaks.</p>
+
+<p>In our case this is the file <code>members.txt</code> of course. More precisely, our tests
+rely on the assumption that the name <code>Monsta</code> is not in the persistent file
+<code>members.txt</code>.</p>
+
+<p>But when we run our tests the first test that executes will add it, and save
+the file. All other tests from then on run against a <em>different</em> persistent
+state than the first one. That is bad.</p>
+
+<p>We can fix that by resetting the contents of the file <code>members.txt</code> to the
+same state before or after each test run. Let&rsquo;s do that:</p>
+<pre class="highlight ruby"><code>  <span class="n">context</span> <span class="s2">"POST to /members"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">post</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Monsta"</span> <span class="p">}</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:file</span><span class="p">)</span>     <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="n">before</span> <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">,</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>I.e. for each of our tests, before RSpec runs it, it will execute the <code>before</code>
+block first, and write the same content to the file.</p>
+
+<p>This is an important concept in testing: You want your tests to always run
+against the same state. If anything is persisted, e.g. in our file, in a
+database, or anywhere else, we need to apply extra measures to make sure
+this state is reset everytime we run a single test.</p>
+
+<p>Cool. When we now run the tests we still get a failure. Our first test still
+does not pass. However, we now get the same failure no matter how often we run
+it.</p>
+
+<p>So what&rsquo;s wrong with the first test?</p>
+
+<h2>Side effects</h2>
+
+<p>If you think about it, we run the actual <code>POST</code> request in the <code>let(:response)</code>
+statement. And so far, all of our tests have somehow used the <code>response</code>.
+Therefore RSpec has executed the <code>POST</code> request, and we&rsquo;ve seen the right
+results.</p>
+
+<p>However, this one test now does not use <code>response</code> at all. It looks at the file
+contents instead. In programming, this is called a <a href="http://programmers.stackexchange.com/questions/40297/what-is-a-side-effect">side effect</a>.
+We test something that is not returned from the method call that we need to
+execute, and therefore our test happens to not make that method call at all.
+You could also say that our test happens to reveal that we&rsquo;re testing a side
+effect here. In this way tests can be diagnostic, and tell us things about
+our code that we haven&rsquo;t noticed before.</p>
+
+<p>In web applications side effects are expected: we do want to store (persist)
+some data in our text file, or in the database. However, it is also good to
+be aware of this.</p>
+
+<p>We could fix our test like so:</p>
+<pre class="highlight ruby"><code>      <span class="n">it</span> <span class="s2">"adds the name to the members.txt file"</span> <span class="k">do</span>
+        <span class="n">response</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s2">"Monsta"</span><span class="p">)</span>
+      <span class="k">end</span>
+</code></pre>
+
+<p>This will first make the <code>POST</code> request, and then inspect the file. In fact,
+our test now passes:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . --format doc app_spec.rb:57
+Run options: include {:locations=&gt;{"./app_spec.rb"=&gt;[57]}}
+
+App
+  POST to /members
+    given a valid name
+      adds the name to the members.txt file
+      returns status 302 Found
+
+Finished in 0.04476 seconds (files took 0.64694 seconds to load)
+2 examples, 0 failures
+</code></pre>
+
+<p>However, calling <code>response</code> in this place seems kind of weird, does it not? We
+don&rsquo;t actually use the response object here. And the line does not really
+convey that all we want to do is make the <code>POST</code> request here.</p>
+
+<p>So what&rsquo;s an alternative?</p>
+
+<h2>Let!</h2>
+
+<p>RSpec has another variation of the <code>let</code> method that makes this more visible:
+<code>let!</code>.</p>
+
+<p><code>let!</code> is useful in exactly such situations: We need to evaluate the
+<code>response</code>, because we need to test a side effect. And we want to mark this as
+an exceptional thing. The same line then also hints that we&rsquo;re making a <code>POST</code>
+request.</p>
+
+<p>That seems like a good compromise, let&rsquo;s use it:</p>
+<pre class="highlight ruby"><code>  <span class="n">context</span> <span class="s2">"POST to /members"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:file</span><span class="p">)</span> <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">before</span>     <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">,</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="n">context</span> <span class="s2">"given a valid name"</span> <span class="k">do</span>
+      <span class="n">let!</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">post</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Monsta"</span> <span class="p">}</span>
+
+      <span class="n">it</span> <span class="s2">"adds the name to the members.txt file"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="nf">to</span> <span class="kp">include</span><span class="p">(</span><span class="s2">"Monsta"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>Ok, this looks great. Our tests pass, and we&rsquo;re using another nice RSpec
+feature.</p>
+
+<h2>Custom matchers</h2>
+
+<p>What&rsquo;s next? What about our redirect test? It would be nice if we could use a
+matcher for that:</p>
+<pre class="highlight ruby"><code>      <span class="n">it</span> <span class="s2">"redirects to /members/:name"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">).</span><span class="nf">to</span> <span class="n">redirect_to</span> <span class="s2">"/members/Monsta"</span>
+      <span class="k">end</span>
+</code></pre>
+
+<p>In fact <code>rspec-rails</code>, a gem for testing Rails applications with RSpec, has such
+a matcher. However, Rack::Test doesn&rsquo;t. So let&rsquo;s use that opportunity to write
+our own custom matcher for this:</p>
+<pre class="highlight ruby"><code><span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="ss">:redirect_to</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span>
+  <span class="n">match</span> <span class="k">do</span> <span class="o">|</span><span class="n">response</span><span class="o">|</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">status</span> <span class="o">==</span> <span class="mi">302</span> <span class="o">&amp;&amp;</span> <span class="n">response</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Location'</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"http://example.org</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Looks alright? We compare the actual response status to 302, and we compare the
+response header <code>Location</code> to a URL that has our path.</p>
+
+<p>What&rsquo;s with the <code>example.org</code> business though? As mentioned at some point in
+the Webapps for Beginners book, a redirect header needs to be a full URL as per
+the HTTP specification. So our Sinatra app turns the path into a full URL.
+Since we haven&rsquo;t specified any other hostname in our app it just adds this
+fantasy domain name.</p>
+
+<p>This works, the given test would pass.</p>
+
+<p>Can you spot a problem with it though?</p>
+
+<p>Our matcher, again, is a brittle. What if we configure a proper hostname for
+our app at some point? Our tests then would fail, even though the application
+code would function as expected. Our tests would be too brittle, and fail when
+they should pass.</p>
+
+<p>Let&rsquo;s fix that, and parse the URL, so we can compare the path only:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'uri'</span>
+
+<span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="ss">:redirect_to</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span>
+  <span class="n">match</span> <span class="k">do</span> <span class="o">|</span><span class="n">response</span><span class="o">|</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Location'</span><span class="p">])</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">status</span> <span class="o">==</span> <span class="mi">302</span> <span class="o">&amp;&amp;</span> <span class="n">uri</span><span class="p">.</span><span class="nf">path</span> <span class="o">==</span> <span class="n">path</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Now, that&rsquo;s much better.</p>
+
+<p>There&rsquo;s one more aspect that is a little brittle, too: we test for a very
+specific status code. According to the HTTP specification all status codes that
+start with a <code>3</code> are considered <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection">redirects</a>.</p>
+
+<p>So let&rsquo;s fix that, too.</p>
+<pre class="highlight ruby"><code><span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="ss">:redirect_to</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span>
+  <span class="n">match</span> <span class="k">do</span> <span class="o">|</span><span class="n">response</span><span class="o">|</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Location'</span><span class="p">])</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">status</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">uri</span><span class="p">.</span><span class="nf">path</span> <span class="o">==</span> <span class="n">path</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>This is a trick, of course. The response status code is an <code>Integer</code>. So if we
+divide it by <code>100</code> we&rsquo;ll get another <code>Integer</code>, in our case <code>3</code>, with any
+decimals cut off.</p>
+
+<p>We could also turn the number into a string and inspect the first character:</p>
+<pre class="highlight ruby"><code><span class="no">RSpec</span><span class="o">::</span><span class="no">Matchers</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="ss">:redirect_to</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">path</span><span class="o">|</span>
+  <span class="n">match</span> <span class="k">do</span> <span class="o">|</span><span class="n">response</span><span class="o">|</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">headers</span><span class="p">[</span><span class="s1">'Location'</span><span class="p">])</span>
+    <span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">.</span><span class="nf">to_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"3"</span> <span class="o">&amp;&amp;</span> <span class="n">uri</span><span class="p">.</span><span class="nf">path</span> <span class="o">==</span> <span class="n">path</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>You decide which one you like better.</p>
+
+<p>Ok, let&rsquo;s slap this matcher into our <code>spec_helper.rb</code> and see if it works:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . --format doc app_spec.rb:65
+Run options: include {:locations=&gt;{"./app_spec.rb"=&gt;[65]}}
+
+App
+  POST to /members
+    given a valid name
+      redirects to /members/:name
+
+Finished in 0.039 seconds (files took 0.69768 seconds to load)
+1 example, 0 failures
+</code></pre>
+
+<p>It does! Very nice.</p>
+
+<h2>Shared examples</h2>
+
+<p>Let&rsquo;s fill in the tests for the next case, posting a duplicate name. We can
+mostly steal from the tests we&rsquo;ve already written for the <code>GET /members/new</code>
+route.</p>
+
+<p>Also, we can simply test that the file still has the expected contents:</p>
+<pre class="highlight ruby"><code>    <span class="n">context</span> <span class="s2">"given a duplicate name"</span> <span class="k">do</span>
+      <span class="n">let!</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">post</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Maren"</span> <span class="p">}</span>
+
+      <span class="n">it</span> <span class="s2">"does not add the name to the members.txt file"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren"</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"returns status 200 OK"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">200</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"displays a form that POSTs to /members"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:form</span><span class="p">,</span> <span class="ss">:action</span> <span class="o">=&gt;</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:method</span> <span class="o">=&gt;</span> <span class="s2">"post"</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"displays an input tag for the name, with the value set"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:input</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="s2">"text"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"name"</span><span class="p">,</span> <span class="ss">:value</span> <span class="o">=&gt;</span> <span class="s2">"Maren"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>Now there&rsquo;s only one context missing: posting an empty string as a name.</p>
+
+<p>This is interesting.</p>
+
+<p>We could simply copy and paste the tests that we already have, and just change
+the name in the before block (and the context description, of course).</p>
+
+<p>However, this is also a great opportunity to look at one more, rather advanced
+RSpec features: shared example groups.</p>
+
+<p>RSpec allows us to define groups of tests (examples), and include them in
+different contexts. And this is exactly what&rsquo;s really useful for us here.</p>
+
+<p>Let&rsquo;s move our tests from the last context to a shared example group like so:</p>
+<pre class="highlight ruby"><code>    <span class="n">shared_examples_for</span> <span class="s2">"invalid member data"</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">"does not add the name to the members.txt file"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren"</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"returns status 200 OK"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">status</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">200</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"displays a form that POSTs to /members"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:form</span><span class="p">,</span> <span class="ss">:action</span> <span class="o">=&gt;</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:method</span> <span class="o">=&gt;</span> <span class="s2">"post"</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"displays an input tag for the name, with the value set"</span> <span class="k">do</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:input</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="s2">"text"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"name"</span><span class="p">,</span> <span class="ss">:value</span> <span class="o">=&gt;</span> <span class="s2">"Maren"</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>Now we can include these tests to our two contexts that deal with invalid
+member data:</p>
+<pre class="highlight ruby"><code>    <span class="n">shared_examples_for</span> <span class="s2">"invalid member data"</span> <span class="k">do</span>
+      <span class="c1"># ...</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">"given a duplicate name"</span> <span class="k">do</span>
+      <span class="n">let!</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">post</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"Maren"</span> <span class="p">}</span>
+      <span class="n">include_examples</span> <span class="s2">"invalid member data"</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s2">"given an empty name"</span> <span class="k">do</span>
+      <span class="n">let!</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">post</span> <span class="s2">"/members"</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">""</span> <span class="p">}</span>
+      <span class="n">include_examples</span> <span class="s2">"invalid member data"</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>That&rsquo;s really cool.</p>
+
+<p>Our final tests now all pass:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . --format doc app_spec.rb
+
+App
+  GET to /members
+    returns status 200 OK
+    displays a list of member names that link to /members/:name
+  GET to /members/:name
+    returns status 200 OK
+    displays the member's name
+  GET to /members/new
+    returns status 200 OK
+    displays a form that POSTs to /members
+    displays an input tag for the name
+    displays a submit tag
+  POST to /members
+    given a valid name
+      adds the name to the members.txt file
+      returns status 302 Found
+      redirects to /members/:name
+    given a duplicate name
+      does not add the name to the members.txt file
+      returns status 200 OK
+      displays a form that POSTs to /members
+      displays an input tag for the name, with the value set
+    given an empty name
+      does not add the name to the members.txt file
+      returns status 200 OK
+      displays a form that POSTs to /members
+      displays an input tag for the name, with the value set
+
+Finished in 0.14409 seconds (files took 0.62813 seconds to load)
+19 examples, 0 failures
+</code></pre>
+
+<p>Why don&rsquo;t you go ahead and add some more specs for the remaining routes.</p>
+
+<p>The groups</p>
+
+<ul>
+<li><code>GET to /members/:name/edit</code> and <code>PUT to /members/:name</code> and</li>
+<li><code>GET to /members/:name/delete</code> and <code>DELETE to /members/:name</code></li>
+</ul>
+
+<p>still need to be tested, and adding these tests makes for an excellent exercise.</p>
+
+        <nav class="page-nav"><a class="prev" href="/rack_test/rack.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/headless.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="../assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="../assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>

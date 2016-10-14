@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Stages of a test | Testing for Beginners</title>
+
+    <link href="../assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/testing/assert.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/testing/classes.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory expanded">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li class="active">
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li>
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li>
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li>
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li>
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Stages of a test</h1>
+
+<p>There are three stages in most tests, and we want to introduce them early so
+you recognize them later.</p>
+
+<p>Let&rsquo;s assume you&rsquo;ve stored the <code>leap_year?</code> method in a file <code>leap_year.rb</code>,
+and you have another file <code>user.rb</code> that looks like this:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"leap_year"</span>
+<span class="nb">require</span> <span class="s2">"date"</span>
+
+<span class="k">class</span> <span class="nc">User</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">birthday</span><span class="p">)</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+    <span class="vi">@birthday</span> <span class="o">=</span> <span class="n">birthday</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">born_in_leap_year?</span>
+    <span class="n">leap_year?</span><span class="p">(</span><span class="no">Date</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="vi">@birthday</span><span class="p">).</span><span class="nf">year</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">if</span> <span class="vg">$0</span> <span class="o">==</span> <span class="kp">__FILE__</span>
+  <span class="k">def</span> <span class="nf">assert_equal</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="nb">method</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">actual</span>
+      <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="nb">method</span><span class="si">}</span><span class="s2"> returned </span><span class="si">#{</span><span class="n">actual</span><span class="si">}</span><span class="s2"> as expected."</span>
+    <span class="k">else</span>
+      <span class="nb">puts</span> <span class="s2">"KAPUTT! </span><span class="si">#{</span><span class="nb">method</span><span class="si">}</span><span class="s2"> did not return </span><span class="si">#{</span><span class="n">expected</span><span class="si">}</span><span class="s2"> as expected, but actually returned </span><span class="si">#{</span><span class="n">actual</span><span class="si">}</span><span class="s2">."</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"2001-01-01"</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+    <span class="s2">"1900-01-01"</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+    <span class="s2">"2000-01-01"</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+    <span class="s2">"2004-01-01"</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+  <span class="p">}</span>
+
+  <span class="n">data</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">date</span><span class="p">,</span> <span class="n">expected</span><span class="o">|</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Jennifer"</span><span class="p">,</span> <span class="n">date</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="nf">born_in_leap_year?</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="s2">"born_in_leap_year? for a User born on </span><span class="si">#{</span><span class="n">date</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>As you can see our tests now have three stages:</p>
+
+<ol>
+<li>We first set up an object that we want to test with a certain birthday: <code>User.new(&quot;Jennifer&quot;, date)</code>.</li>
+<li>We then call the method we&rsquo;re interested in: <code>user.born_in_leap_year?</code>.</li>
+<li>And finally we assert that the result actually is the expected result.</li>
+</ol>
+
+<p>These three stages often can be found in tests:</p>
+
+<ol>
+<li>Setup</li>
+<li>Execution</li>
+<li>Assertion</li>
+</ol>
+
+<p>In a web application, for example, the setup stage could mean that we store
+certain data in the database. In the execution stage we then make a request to
+the application. E.g. we&rsquo;d <code>GET</code> a list, or we&rsquo;d <code>POST</code> a new entry.  In the
+assertion stage we&rsquo;d then assert (make sure) that we get the expected result.
+E.g. if we&rsquo;ve used <code>GET</code> we&rsquo;d inspect the returned HTML to see if the expected
+entries are listed. Or if we&rsquo;ve used <code>POST</code> to create a new entry we might look
+at the database to see if the record actually has been created.</p>
+
+        <nav class="page-nav"><a class="prev" href="/testing/assert.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/testing/classes.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="../assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="../assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>

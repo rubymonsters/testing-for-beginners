@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Test doubles | Testing for Beginners</title>
+
+    <link href="assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/headless/features.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/analysis.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li>
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li>
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li>
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li>
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li>
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="active">
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Test doubles</h1>
+
+<p><em>Faking all the things</em></p>
+
+<p>Again, terminology about testing can be super confusing, and people have used
+the terms used in this chapter in various, different ways. Even more confusing,
+some test libraries use these terms in different ways, implementing different
+kinds of behaviour.</p>
+
+<p>For now we&rsquo;ll roll with the terms referenced by Martin Fowler in his famous
+article <a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren&rsquo;t Stubs</a>,
+also referenced <a href="http://stackoverflow.com/a/17810004/4130316">here</a>.</p>
+
+<p>This defines &ldquo;test double&rdquo; as an umbrella term for the following four terms:</p>
+
+<ul>
+<li>Mocks: Expectations about method calls, verifying them, and faking returning a value</li>
+<li>Stubs: Fake responses to method calls</li>
+<li>Fake: Objects with a working implementation that is useful for tests</li>
+<li>Dummy: Usually not very relevant in Ruby testing</li>
+</ul>
+
+<p>Also, in Ruby, we might add this one to the list, instead of Dummy (which you
+don&rsquo;t really see that often):</p>
+
+<ul>
+<li>Spies: Verifying that a stubbed method has been called before</li>
+</ul>
+
+<p>Ok, that&rsquo;s a lot of stuff.</p>
+
+<p>The two most commonly used techniqes are mocks and stubs. So let&rsquo;s focus on
+these first:</p>
+
+<p class="hint">
+Mocks and stubs are techniques that are used at the boundaries of the code
+under test.
+</p>
+
+<p>What?</p>
+
+<p>In our <code>members</code> application the boundaries of our app are the Rack interface
+on one side (which hooks into the server, and is called whenever a an actual
+HTTP request comes in).</p>
+
+<p>Most of the time, when we called our app in the <code>Rack::Test</code> based tests our
+Ruby class (or: Sinatra app) just checked some conditions, rendered some
+HTML, etc, and then returned a response object that we could test.</p>
+
+<p>However, doing so it then also talks to something external: It reads and writes
+to a text file that is stored on our hard drive. In other words, it uses an
+external resource. Something that is not specific to our test or application
+code (written in Ruby), but specific to the computer (&ldquo;system&rdquo;) we&rsquo;re running
+these tests on.</p>
+
+<p>In most web applications this would be a database, not a text file. Sometimes
+it also would mean that we&rsquo;d make HTTP requests to talk to another application.
+Or we might send emails, resize images or store PDF files, &hellip; whatever our
+application needs to produce in order to do its job, besides returning a
+status code and some kind of HTML.</p>
+
+<p>Mocks and stubs are useful techniques in tests in exactly these places: At the
+boundary of our code and external &ldquo;things&rdquo;.</p>
+
+<h2>Stubs</h2>
+
+<p>Let&rsquo;s see how that looks like in praxis.</p>
+
+<p>Imagine we&rsquo;d want our code, when we test our <code>members</code> app to not actually
+touch the <code>members.txt</code> file for whatever reason. Instead we&rsquo;d like to fake
+reading and writing to the file.</p>
+
+<p>How can we do that?</p>
+
+<p>RSpec has a built-in library called <a href="https://www.relishapp.com/rspec/rspec-mocks/docs">rspec-mocks</a>.
+There are a bunch of <a href="https://www.ruby-toolbox.com/categories/mocking">other libraries</a>
+that provide similar functionality, most notably <a href="https://github.com/freerange/mocha">Mocha</a>
+which is really popular, too. We&rsquo;ll just use RSpec for now.</p>
+
+<p>Consider our test code from before:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="p">{</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
+  <span class="n">before</span>    <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s1">'members.txt'</span><span class="p">,</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members/Anja"</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:p</span><span class="p">,</span> <span class="ss">:text</span> <span class="o">=&gt;</span> <span class="s2">"Name: Anja"</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>This code, under the hood, will read the file <code>members.txt</code>. Doing so it talks
+to an &ldquo;external system&rdquo;, i.e. our computer&rsquo;s operating system, in order to
+access the file on the harddrive.</p>
+
+<p>This method making this call might look like this:</p>
+<pre class="highlight ruby"><code>  <span class="k">def</span> <span class="nf">names</span>
+    <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="no">FILENAME</span><span class="p">).</span><span class="nf">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>Now our objective is to make it so that the method call <code>File.read</code> is not
+actually executed, but faked, and returns a value that we expect: some fake
+content.</p>
+
+<p>The RSpec documentation gives the following example about setting up stubs with
+RSpec:</p>
+<pre class="highlight ruby"><code><span class="n">allow</span><span class="p">(</span><span class="n">dbl</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:foo</span><span class="p">).</span><span class="nf">with</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+</code></pre>
+
+<p>Ok, so we &ldquo;allow&rdquo; an object (<code>dbl</code>) to &ldquo;receive&rdquo; a certain method call
+(<code>:foo</code>), with a certain argument (<code>1</code>), and return a certain value (<code>14</code>).</p>
+
+<p>That sounds like what we want. Let&rsquo;s try this:</p>
+<pre class="highlight ruby"><code><span class="no">RSpec</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">mock_with</span> <span class="ss">:rspec</span> <span class="c1"># use rspec-mocks</span>
+<span class="k">end</span>
+
+<span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span>      <span class="p">{</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
+
+  <span class="n">before</span> <span class="k">do</span>
+    <span class="n">allow</span><span class="p">(</span><span class="no">File</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:read</span><span class="p">).</span><span class="nf">with</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members/Anja"</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_tag</span><span class="p">(</span><span class="ss">:p</span><span class="p">,</span> <span class="ss">:text</span> <span class="o">=&gt;</span> <span class="s2">"Name: Anja"</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>If you run this this test should pass. If you delete the file <code>members.txt</code> it
+still passes.</p>
+
+<p>What&rsquo;s going on here?</p>
+
+<p>Under the hood, RSpec leverages Ruby&rsquo;s powerful capabilities in modifying,
+replacing, and re-defining code at runtime.</p>
+
+<p>Let&rsquo;s walk through it.</p>
+
+<ul>
+<li><p>In the before block, when RSpec has started executing our code, it replaces
+the method <code>read</code> with <em>another</em> method that, if it is passed the argument
+specified (in our case: the filename), will return the return value specified
+(the string that is our fake file content).</p></li>
+<li><p>When it then executes the test, calls our application, and our application
+calls the method <code>names</code>, it will call this fake (&ldquo;stubbed&rdquo;) method
+<code>File.read?</code> instead of the original, real method that actually reads a file
+on the harddrive. The fake method will do nothing but return the value
+we specified: <code>&quot;Anja\nMaren\n&quot;</code></p></li>
+<li><p>So to our application everything looks as if it was talking to the operating
+system, and looking at actual files on the harddrive, while actually it
+just calls fake methods that return the fake values we specified. Therefore
+the application functions just the same, and our tests passs, except it&rsquo;s not
+talking to the external system that is our computer at all at this point.</p></li>
+<li><p>After the test has run RSpec will then remove these fake methods, so that
+other tests (in other contexts that do not have this <code>before</code> block) could
+talk to the original, &ldquo;real&rdquo; method <code>File.read</code> again.</p></li>
+</ul>
+
+<p>Wow. This is quite a bit of stuff to digest.</p>
+
+<p>The core idea is that, when we <code>allow</code> an object to <code>receive</code> a method, RSpec
+will create this fake method for the time the test runs, and it will remove
+it again at the end.</p>
+
+<p>Now, this is called &ldquo;stubbing&rdquo; a method. We replace it with a fake method,
+so that we don&rsquo;t have to talk to an external system.</p>
+
+<p>Btw if we would make a mistake, and stub the method call with the wrong arguments,
+then RSpec would fail, and display an error like this:</p>
+<pre class="highlight plaintext"><code>RSpec::Mocks::MockExpectationError at members
+File (class) received :read with unexpected arguments
+  expected: ("members.text")
+       got: ("members.txt")
+ Please stub a default value first if message might be received with other args as well.
+</code></pre>
+
+<p>Because we&rsquo;ve &ldquo;allowed&rdquo; the method to be called with certain arguments, but
+not otherwise.</p>
+
+<p>Some would argue that this is an implicit expectation or assertion, and that
+stubs shouldn&rsquo;t actuall assert anything, but this is how RSpec stubs work.</p>
+
+<h2>Mocks</h2>
+
+<p>Mocks on the other hand are pretty similar, but also very different.</p>
+
+<p>Mocks are there to make assertions about methods being called during your
+tests.</p>
+
+<p>They work pretty much the same in that RSpec replaces the original method with
+a fake method, and you can specify arguments as well as a return value.</p>
+
+<p>However, RSpec will also record how often your method has been called during
+your test. And at the end of the test it will not only remove this fake method
+again, but also verify that the method has been called the expected number of
+times (usually once) with the expected arguments.</p>
+
+<p>Here&rsquo;s how that looks like in RSpec:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="p">{</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members/Anja"</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="no">File</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:read</span><span class="p">).</span><span class="nf">with</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+      <span class="n">get</span> <span class="s2">"/members"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>This is called &ldquo;mocking&rdquo; a method: expecting and asserting that the method will
+be called later.</p>
+
+<p>Again, if we run this spec, but we make a mistake with the argument that we
+expect to be passed (e.g. we have a typo <code>members.text</code>), then our tests will
+fail:</p>
+<pre class="highlight plaintext"><code>$ rspec -I . app_spec.rb:15
+Run options: include {:locations=&gt;{"./app_spec.rb"=&gt;[15]}}
+F
+
+Failures:
+
+  1) App GET to /members/:name displays the member's name
+     Failure/Error: expect(File).to receive(:read).with("members.text").and_return("Anja\nMaren\n")
+
+       (File (class)).read("members.text")
+           expected: 1 time with arguments: ("members.text")
+           received: 0 times
+     # ./app_spec.rb:16:in `block (3 levels) in &lt;top (required)&gt;'
+
+Finished in 0.08187 seconds (files took 0.72415 seconds to load)
+1 example, 1 failure
+
+Failed examples:
+
+rspec ./app_spec.rb:15 # App GET to /members/:name displays the member's name
+</code></pre>
+
+<p>That makes sense, doesn&rsquo;t it? The method hasn&rsquo;t been called with these
+arguments after all.</p>
+
+<p>As you can see the workflow with mocked methods is a little different from
+the workflow we&rsquo;ve seen in our tests so far:</p>
+
+<p>With mocked methods you have to set up your expectation <em>first</em>, then run
+the actual code, and then RSpec will verify your expectation at the end.</p>
+
+<p>Therefore we need to call <code>expect(File).to receive(:read)</code> first, and then
+make the get request in our test above.</p>
+
+<h2>Spies</h2>
+
+<p>RSpec therefore has another way to achieve the same, which is called a
+&ldquo;spying&rdquo;. [1]</p>
+
+<p>Here&rsquo;s how method &ldquo;spying&rdquo; works in RSpec:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="p">{</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
+
+  <span class="n">context</span> <span class="s2">"GET to /members/:name"</span> <span class="k">do</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:response</span><span class="p">)</span> <span class="p">{</span> <span class="n">get</span> <span class="s2">"/members/Anja"</span> <span class="p">}</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:filename</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"members.txt"</span> <span class="p">}</span>
+    <span class="n">let</span><span class="p">(</span><span class="ss">:content</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span> <span class="p">}</span>
+
+    <span class="n">before</span> <span class="p">{</span> <span class="n">allow</span><span class="p">(</span><span class="no">File</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:read</span><span class="p">).</span><span class="nf">with</span><span class="p">(</span><span class="n">filename</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="p">}</span>
+
+    <span class="n">it</span> <span class="s2">"displays the member's name"</span> <span class="k">do</span>
+      <span class="n">get</span> <span class="s2">"/members"</span>
+      <span class="n">expect</span><span class="p">(</span><span class="no">File</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_received</span><span class="p">(</span><span class="ss">:read</span><span class="p">).</span><span class="nf">with</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>As you can see that &ldquo;fixes&rdquo; the order: Our test first runs the get request,
+and then verifies that the method <code>File.read</code> has been called with the expected
+argument.</p>
+
+<p>However, in order for that to work, we also have to stub the method in the
+<code>before</code> block first. Otherwise RSpec would not have had the opportunity to
+record calls to this method, and therefore raised an error like this:</p>
+<pre class="highlight plaintext"><code>Failure/Error: expect(File).to have_received(:read).with(filename)
+ #&lt;File (class)&gt; expected to have received read, but that object is not a spy or method has not been stubbed.
+</code></pre>
+
+<p>To summarize:</p>
+
+<ul>
+<li>Stubbing and mocking methods replaces the original methods temporarily.</li>
+<li>Stubbing a method replaces it in order to fake it, and allow it to be called
+without executing the original, &ldquo;real&rdquo; method. This can be useful if we want
+our tests to not talk to external systems or code we do not want to test at
+the moment.</li>
+<li>Mocking a method asserts that the method actually is being called during our
+tests.</li>
+<li>Spying on a method (in RSpec) means verifying that a stubbed method has been
+called after the fact.</li>
+</ul>
+
+<h2>Double objects</h2>
+
+<p>So far we&rsquo;ve talked about replacing methods with fake methods that we&rsquo;d either
+allow or expect to be called during our tests.</p>
+
+<p>Sometimes it is useful to have entire fake objects that can be passed around.</p>
+
+<p>Consider this code from our <a href="#">Ruby for Beginners</a> book:</p>
+<pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">Person</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">name</span>
+    <span class="vi">@name</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="s2">"Hi "</span> <span class="o">+</span> <span class="n">other</span><span class="p">.</span><span class="nf">name</span> <span class="o">+</span> <span class="s2">"! My name is "</span> <span class="o">+</span> <span class="nb">name</span> <span class="o">+</span> <span class="s2">"."</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">person</span> <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Anja"</span><span class="p">)</span>
+<span class="n">friend</span> <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Carla"</span><span class="p">)</span>
+
+<span class="nb">puts</span> <span class="n">person</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">friend</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">friend</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+</code></pre>
+
+<p>Let&rsquo;s say we want to test that in RSpec, instead of just trying it out at the
+end of the file.</p>
+
+<p>We could turn this into tests like so:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">Person</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:person</span><span class="p">)</span> <span class="p">{</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Anja"</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:friend</span><span class="p">)</span> <span class="p">{</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Carla"</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">describe</span> <span class="s2">"greet"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns a greeting"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">person</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">friend</span><span class="p">)).</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"Hi Carla! My name is Anja."</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Now, imagine that, for whatever reason, it is really expensive or cumbersome to
+create the <code>friend</code> instance.</p>
+
+<p>In that case it would be useful to be able to quickly create a fake object (a
+&ldquo;double&rdquo;), and allow the method <code>name</code> to be called on it: That&rsquo;s the only
+method the method <code>person.greet</code> needs to call on the <code>other</code> object, right?</p>
+
+<p>RSpec has a convient way of creating such fake objects (doubles):</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">Person</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:person</span><span class="p">)</span> <span class="p">{</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Anja"</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:friend</span><span class="p">)</span> <span class="p">{</span> <span class="n">double</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"Carla"</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">describe</span> <span class="s2">"greet"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns a greeting"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">person</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">friend</span><span class="p">)).</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"Hi Carla! My name is Anja."</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>So, we do create a <code>Person</code> instance for the <code>person</code>, so we can actually call
+the method <code>greet</code> on it. However, we do not create a second instance of the
+same class. In the end, the method <code>greet</code> does not care what kind of object
+is passed as <code>other</code>, as long as it responds to the method <code>name</code>, right? [2]</p>
+
+<p>And yes, this test passes, too. Pretty cool.</p>
+
+<h2>When to use doubles</h2>
+
+<p>Ok, this is all pretty interesting stuff. But how do you know when to use
+stubs, mocks, spies, or fake objects?</p>
+
+<p>As always, the answer clearly is, it depends. There are rarely any very clear
+answers.</p>
+
+<p>If your application talks to an external API (such as Twitter for signing in
+users via OAuth, or GitHub for fetching some code that you&rsquo;d like to inspect)
+then that would be a very clear case. You definitely don&rsquo;t want your tests
+to make any HTTP calls to an external API: not only is that super slow, but
+it also would mean that you cannot work on your tests when your offline.</p>
+
+<p>Generally, when talking to any external system is problematic, then that&rsquo;s
+a good indication that you&rsquo;d want to use a stub to fake that call.</p>
+
+<p>Whether you need to also assert the call being made, i.e. when using a mock is
+a good idea, is an entirely different question, and it is one that has been
+debated for years.</p>
+
+<p>Consider our tests from above:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">Person</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:person</span><span class="p">)</span> <span class="p">{</span> <span class="no">Person</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Anja"</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:friend</span><span class="p">)</span> <span class="p">{</span> <span class="n">double</span><span class="p">(</span><span class="ss">name: </span><span class="s2">"Carla"</span><span class="p">)</span> <span class="p">}</span>
+
+  <span class="n">describe</span> <span class="s2">"greet"</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="s2">"returns a greeting"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">person</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">friend</span><span class="p">)).</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"Hi Carla! My name is Anja."</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Our test does in no way verify that the method <code>name</code> actually has been
+called on the fake <code>friend</code> object. What if we&rsquo;ve accidentally left a hardcoded
+value in our implementation, like so:</p>
+<pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">Person</span>
+  <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="s2">"Hi Carla! My name is "</span> <span class="o">+</span> <span class="nb">name</span> <span class="o">+</span> <span class="s2">"."</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Hmm, ok, that could happen. If we are concerned about this case then we
+could verify the method call with a mock like so:</p>
+<pre class="highlight ruby"><code>    <span class="n">it</span> <span class="s2">"calls name on the other person"</span> <span class="k">do</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">friend</span><span class="p">).</span><span class="nf">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:name</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="s2">"Carla"</span><span class="p">)</span>
+      <span class="n">person</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">friend</span><span class="p">)</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>Or we could use a spy (this works fine because <code>friend</code> is a double, and
+already has the method <code>name</code> stubbed):</p>
+<pre class="highlight ruby"><code>    <span class="n">it</span> <span class="s2">"calls name on the other person"</span> <span class="k">do</span>
+      <span class="n">person</span><span class="p">.</span><span class="nf">greet</span><span class="p">(</span><span class="n">friend</span><span class="p">)</span>
+      <span class="n">expect</span><span class="p">(</span><span class="n">friend</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_receive</span><span class="p">(</span><span class="ss">:name</span><span class="p">).</span><span class="nf">and_return</span><span class="p">(</span><span class="s2">"Carla"</span><span class="p">)</span>
+    <span class="k">end</span>
+</code></pre>
+
+<p>Whether or not you want to add such tests to your test suite depends on many
+factors.</p>
+
+<p>In the end tests are there to make yourself (and your co-workers) feel
+comfortable making changes to your code. When you run your tests you want to
+feel safe enough to publish your code and not break anything (to your
+production system, to your friends, to the open source community).</p>
+
+<p>&ldquo;Comfortable&rdquo; is a very personal thing though. It depends on your personality,
+experience, on your team, and everyone&rsquo;s views and gutfeelings.</p>
+
+<p>This is true for testing in general, but it&rsquo;s also particularly true when
+it comes to the question how much to test.</p>
+
+<p>Remember tests are software, too. They also can have bugs, and cause making
+changes hard, when you write too many, too detailed tests. On the other hand,
+if you have too few tests, or test the wrong things, you might introduce a bug,
+and cause yourself even more work fixing it. So it&rsquo;s a tradeoff, as always.</p>
+
+<p>Over time, the more tests your write, you&rsquo;ll develop a good feeling, and your
+own views. Maybe you&rsquo;ll work on different teams that have different conventions
+for what to test, and how. It also helps to ask more experienced developers
+about their views. Again, be prepared to get 10 different answers when you
+ask 10 different people :)</p>
+
+<p>Katrina Owen has given an amazing talk titled &ldquo;467 tests, 0 failures, 0
+confidence&rdquo;  on the differences between mocks and stubs, and when to use what,
+at Railsberry 2013. You can watch it on Vimeo
+<a href="https://vimeo.com/68730418">here</a>, and have a look at her slides
+<a href="https://speakerdeck.com/railsberry/zero-confidence-by-katrina-owen">here</a>.
+Check it out:</p>
+
+<iframe class="video" src="https://player.vimeo.com/video/68730418" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+<h2>Footnotes</h2>
+
+<p>[1] Spying on methods is used in various different ways, depending on the
+library used. In the most popular Ruby libraries (such as
+<a href="http://www.relishapp.com/rspec/rspec-mocks/v/3-5/docs/basics/spies">RSpec</a>,
+<a href="http://technicalpickles.com/posts/ruby-stubbing-and-mocking-with-rr/">RR</a>,
+<a href="https://github.com/jimweirich/flexmock#spies">FlexMock</a>) &ldquo;spying&rdquo; refers to
+the technique of verifying that a previously <em>stubbed</em> method actually has been
+called, after the fact. In other contexts it means a technique that leaves the
+original method in place, allows it to be called, but records the method call
+so it can be verified later. Both techniques are similar, but also very
+different in that the original method either needs to be stubbed (replaced)
+first or can still be used.</p>
+
+<p>[2] You&rsquo;ve probably heard about the term &ldquo;duck typing&rdquo; at some point. This term
+refers to the fact that in Ruby methods don&rsquo;t care what kind of objects are
+being passed, as long as they behave in a certain way (respond to certain other
+methods): As long as it walks like a duck, and quacks like a duck, &hellip;</p>
+
+        <nav class="page-nav"><a class="prev" href="/headless/features.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/analysis.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>

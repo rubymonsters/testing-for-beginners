@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Matchers | Testing for Beginners</title>
+
+    <link href="../assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/rspec/basics.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/rspec/format.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li>
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory expanded">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li class="active">
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li>
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li>
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li>
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li>
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Matchers</h1>
+
+<p>We&rsquo;ve discussed how methods such as <code>describe</code> and <code>context</code> are used to set
+up a structure for our tests, and how <code>it</code> adds an actual test (&ldquo;example&rdquo;) to
+it.</p>
+
+<p>What about the implementation of the test, though?</p>
+
+<p>Let&rsquo;s look at our code again:</p>
+<pre class="highlight ruby"><code><span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Francisca"</span><span class="p">,</span> <span class="s2">"2000-01-01"</span><span class="p">)</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="nf">born_in_leap_year?</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="kp">true</span>
+</code></pre>
+
+<p>What does <code>expect</code> do, exactly? And what&rsquo;s the deal with <code>to</code> and <code>eq</code> (equal)?</p>
+
+<p>These also are methods that RSpec defines for us, so we can describe our
+expectations in a readable way. That is to say, these methods are RSpec&rsquo;s equivalent to
+assertions (<code>assert</code> and friends) in Minitest.</p>
+
+<p>Some people feel they read much better than Minitest&rsquo;s assertion methods
+(<code>assert_equal(one, other)</code>), because they express more clearly what&rsquo;s the
+actual value, how to compare, and what&rsquo;s the expected value. Almost like
+an English sentence.</p>
+
+<p>Technically, <code>expect</code> returns an object that responds to the method <code>to</code>. This
+method <code>to</code> expects to be passed an object that is a so-called matcher. It will
+then call the matcher to see if it &hellip; well, matches.</p>
+
+<p>Remember that in Ruby you can omit parentheses when calling a method (as long as this doesn&rsquo;t make your code ambiguous). So we
+could just as well add them:</p>
+<pre class="highlight ruby"><code><span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="nf">born_in_leap_year?</span><span class="p">).</span><span class="nf">to</span><span class="p">(</span><span class="n">eq</span><span class="p">(</span><span class="kp">true</span><span class="p">))</span>
+</code></pre>
+
+<p>Or we could make more visible what the matcher is (if we wanted):</p>
+<pre class="highlight ruby"><code><span class="n">match</span> <span class="o">=</span> <span class="n">eq</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="nf">born_in_leap_year?</span><span class="p">).</span><span class="nf">to</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+</code></pre>
+
+<p>The method <code>eq</code> returns an RSpec matcher that simply tests if the object passed
+to <code>expect</code> is equal to the object passed to <code>eq</code>. This may sound more
+complicated than it is.</p>
+
+<p>If you have a look at the <a href="https://relishapp.com/rspec/rspec-expectations/v/3-5/docs/built-in-matchers">documentation</a>
+there are lots and lots of matchers pre-defined, and RSpec makes it easy to
+define your own matchers, too (we&rsquo;ll get to that later).</p>
+
+<p>For example:</p>
+<pre class="highlight ruby"><code><span class="n">expect</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="nf">to</span> <span class="n">be</span> <span class="o">&gt;</span> <span class="mi">5</span>
+<span class="n">expect</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]).</span><span class="nf">to</span> <span class="kp">include</span> <span class="mi">1</span>
+<span class="n">expect</span><span class="p">(</span><span class="s2">"Ruby Monstas"</span><span class="p">).</span><span class="nf">to</span> <span class="n">start_with</span> <span class="s2">"Ruby"</span>
+</code></pre>
+
+<p>No matter exactly how the code that implements these methods <code>expect</code>, <code>to</code>,
+and, for example, <code>eq</code> or <code>start_with</code> works: the purpose is to allow for
+code that kinda reads like an English sentence. You&rsquo;ll get used to these pretty soon, once
+you&rsquo;ve started writing some RSpec tests.</p>
+
+<p>Just try to remember (or look it up here) that, essentially, you start with
+<code>expect(whatever_thing_to_test).to</code>, and then you find a matcher that works.
+<code>eq</code> always is a good start. So you end up with:</p>
+<pre class="highlight ruby"><code><span class="n">expect</span><span class="p">(</span><span class="n">whatever_thing_to_test</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">whatever_you_expect</span>
+</code></pre>
+
+<p>For example:</p>
+<pre class="highlight ruby"><code><span class="n">expect</span><span class="p">(</span><span class="n">your_object</span><span class="p">.</span><span class="nf">some_method_to_test</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"the concrete value that you expect to be returned"</span>
+</code></pre>
+
+<p>Does that make sense?</p>
+
+<p>Cool. Let&rsquo;s have a look at another badass feature RSpec comes with.</p>
+
+<h2>Magic matchers</h2>
+
+<p>RSpec also allows you to use matchers that depend on the methods defined on the
+object passed.</p>
+
+<p>Wait, what?</p>
+
+<p>Yeah.</p>
+
+<p>Here&rsquo;s a simple example:</p>
+<pre class="highlight ruby"><code><span class="n">expect</span><span class="p">(</span><span class="kp">nil</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_nil</span>
+</code></pre>
+
+<p>The matcher <code>be_nil</code> expects the method <code>nil?</code> to be defined on the object
+under test, i.e. the object <code>nil</code>. As a matter of fact, the method <code>nil?</code> <em>is</em>
+defined on every object in Ruby. And in our case, <code>nil.nil?</code> returns true, of
+course, so the test would pass.</p>
+
+<p>This test, however, would not pass:</p>
+<pre class="highlight ruby"><code><span class="n">expect</span><span class="p">(</span><span class="kp">true</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_nil</span>
+</code></pre>
+
+<p>Because <code>true.nil?</code> returns false.</p>
+
+<p>Now, our <code>User</code> instances respond to the method <code>born_in_leap_year?</code>. Therefore
+RSpec allows us to use a matcher <code>be_born_in_leap_year</code>:</p>
+<pre class="highlight ruby"><code><span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Francisca"</span><span class="p">,</span> <span class="s2">"2000-01-01"</span><span class="p">)</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_born_in_leap_year</span>
+</code></pre>
+
+<p>Whoa.</p>
+
+<p>RSpec sees that we&rsquo;re calling the method <code>be_born_in_leap_year</code> and it figures
+&ldquo;Ok, that must mean that the call <code>user.born_in_leap_year?</code> must return true.&rdquo;</p>
+
+<p>Such &ldquo;magic&rdquo; methods are another meta-programming technique that RSpec leverages
+here. Usually they&rsquo;re pretty debatable, and often not a great choice. However,
+in this case, they allow adding this very cool feature to RSpec.</p>
+
+<h2>Negating matchers</h2>
+
+<p>What if we want to specify that a user is <em>not</em> born in a leap year, though?
+In other words, if we want to negate our expectation?</p>
+
+<p>RSpec allows us to simply invert a matcher by using the method <code>not_to</code> as
+opposed to <code>to</code>:</p>
+<pre class="highlight ruby"><code>  <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">).</span><span class="nf">to</span> <span class="n">be_born_in_leap_year</span> <span class="c1"># vs</span>
+  <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="p">).</span><span class="nf">not_to</span> <span class="n">be_born_in_leap_year</span>
+</code></pre>
+
+<p>This works for all other matchers, too, of course — and <code>to_not</code> can be used interchangeably with <code>not_to</code>:</p>
+<pre class="highlight ruby"><code>  <span class="n">expect</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="mi">1</span>
+  <span class="n">expect</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="nf">not_to</span> <span class="n">eq</span> <span class="mi">1</span>
+
+  <span class="n">expect</span><span class="p">(</span><span class="kp">true</span><span class="p">).</span><span class="nf">to</span> <span class="n">be</span> <span class="kp">true</span>
+  <span class="n">expect</span><span class="p">(</span><span class="kp">false</span><span class="p">).</span><span class="nf">not_to</span> <span class="n">be</span> <span class="kp">true</span>
+
+  <span class="n">expect</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]).</span><span class="nf">to</span> <span class="kp">include</span> <span class="mi">1</span>
+  <span class="n">expect</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]).</span><span class="nf">to_not</span> <span class="kp">include</span> <span class="mi">9</span>
+
+  <span class="n">expect</span><span class="p">(</span><span class="s2">"Ruby Monstas"</span><span class="p">).</span><span class="nf">to</span> <span class="n">start_with</span> <span class="s2">"Ruby"</span>
+  <span class="n">expect</span><span class="p">(</span><span class="s2">"Ruby Monstas"</span><span class="p">).</span><span class="nf">to_not</span> <span class="n">start_with</span> <span class="s2">"Java"</span>
+</code></pre>
+
+<p>And so on.</p>
+
+<h2>Simple expectations</h2>
+
+<p>If all this matcher business seems too complicated to you, don&rsquo;t worry. You&rsquo;re
+not the first programmer feeling that way.</p>
+
+<p>For now you can always fall back on comparing actual and expected values
+like so:</p>
+<pre class="highlight ruby"><code><span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Francisca"</span><span class="p">,</span> <span class="s2">"2000-01-01"</span><span class="p">)</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="nf">name</span>
+<span class="n">expected</span> <span class="o">=</span> <span class="s2">"Francisca"</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">actual</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">expected</span>
+</code></pre>
+
+<p>Or:</p>
+<pre class="highlight ruby"><code><span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"Francisca"</span><span class="p">,</span> <span class="s2">"2000-01-01"</span><span class="p">)</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="nf">born_in_leap_year?</span>
+<span class="n">expected</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">actual</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">expected</span>
+</code></pre>
+
+<p>That&rsquo;s some more code to type, but doing that sometimes helps RSpec beginners to
+understand what&rsquo;s going on better.</p>
+
+        <nav class="page-nav"><a class="prev" href="/rspec/basics.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/rspec/format.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="../assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="../assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>

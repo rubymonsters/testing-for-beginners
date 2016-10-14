@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Phantom.js | Testing for Beginners</title>
+
+    <link href="../assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/headless.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/headless/capybara.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li>
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li>
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory expanded">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li class="active">
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li>
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li>
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Phantom.js</h1>
+
+<p><em>Headless browers</em></p>
+
+<p>In order to install Phantom.js download it from their website <a href="http://phantomjs.org/download.html">here</a>.</p>
+
+<p>On Windows the download page says that <code>phantomjs.exe</code> should be ready use
+once you&rsquo;ve run the installer.</p>
+
+<p>On Mac OSX and Linux you&rsquo;ll need to download and extract the zip file, move the
+contents to a proper place, and make the binary (executable, command line app)
+available in your PATH (that&rsquo;s a variable that tells the system where to look
+for binaries (command line apps).</p>
+
+<p>Here&rsquo;s one way to do that:</p>
+
+<p>Download and the zip file for your operating system. On Mac OSX it would end
+up in a the <code>~/Downloads</code> directory, so you can go there and expand the zip
+file by double clicking it.</p>
+
+<p>At the time of this writing the current version is <code>2.1.1</code>, and it is included
+in the directory name. So we&rsquo;re going to use <code>~/Downloads/phantomjs-2.1.1-macosx</code>
+in this example. You&rsquo;ll need to use the version number and operating system
+name that you have.</p>
+
+<p>Now in your terminal copy it to a proper place. One good location is <code>/usr/local</code>:</p>
+<pre class="highlight plaintext"><code>$ sudo cp ~/Downloads/phantomjs-2.1.1-macosx/bin/phantomjs /usr/local/bin
+</code></pre>
+
+<p><code>sudo</code> might not be necessary, e.g. if you&rsquo;re using Homebrew. But on many
+systems it will be. <code>sudo</code> will ask you for your computer&rsquo;s password, enter it,
+and hit return.</p>
+
+<p>Once you&rsquo;ve successfully installed <code>phantomjs</code> your system should find it
+when you run:</p>
+<pre class="highlight plaintext"><code>$ which phantomjs
+/usr/local/bin/phantomjs
+</code></pre>
+
+<p>If that outputs <code>phantomjs not found</code> you&rsquo;ve made a mistake.</p>
+
+<h2>Trying out Phantom.js</h2>
+
+<p>Now let&rsquo;s try to do something with it.</p>
+
+<p>Phantom.js wants us to use Javascript. So let&rsquo;s create a file <code>monstas.js</code>
+and add the following code:</p>
+<pre class="highlight javascript"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Hello Ruby Monstas!'</span><span class="p">);</span>
+<span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+</code></pre>
+
+<p>Save that file and run it with phantom.js in the terminal like so:</p>
+<pre class="highlight plaintext"><code>$ phantomjs monstas.js
+Hello Ruby Monstas!
+</code></pre>
+
+<p>On my computer that hangs for a brief moment, but then executes the Javascript
+code and prints out the message.</p>
+
+<p>That&rsquo;s kinda cool, isn&rsquo;t it? We&rsquo;ve just uses a browser to run some Javascript
+and print something to the Javascript console (which gets printed to our
+terminal because there&rsquo;s no browser window).</p>
+
+<p>Let&rsquo;s try browsing to an actual website.</p>
+
+<p>Change the code in the file <code>monstas.js</code> like so:</p>
+<pre class="highlight javascript"><code> <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'webpage'</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+ <span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">'http://rubymonstas.org/'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">page</span><span class="p">.</span><span class="nx">plainText</span><span class="p">);</span>
+   <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+ <span class="p">});</span>
+</code></pre>
+
+<p>When you run this it will output the plain text from our website, with all
+HTML tags removed:</p>
+<pre class="highlight plaintext"><code>$ phantomjs monstas.js
+Ruby Monstas
+
+Ruby Monstas stands for (Berlin) Ruby Monday Study Group’stas, and this is our homepage.
+
+We are one of many project groups in the Berlin Rails Girls community, some of which can be found here.
+
+We meet every Monday at 7pm at the Ganz oben office (the office on the very top floor).
+</code></pre>
+
+<p>Hah! How cool is that. We can write some Javascript code that, when run on the terminal
+will actually browse to a website, fetch the response, and display the text.</p>
+
+<p>Let&rsquo;s try outputting the actual HTML:</p>
+<pre class="highlight javascript"><code> <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'webpage'</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+ <span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">'http://rubymonstas.org/'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">page</span><span class="p">.</span><span class="nx">content</span><span class="p">);</span>
+   <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+ <span class="p">});</span>
+</code></pre>
+
+<p>And run it:</p>
+<pre class="highlight html"><code>$ phantomjs monstas.js
+<span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Ruby Monstas<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"/styles.css"</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">type=</span><span class="s">"text/css"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+
+  <span class="nt">&lt;body</span> <span class="na">id=</span><span class="s">"index"</span> <span class="na">class=</span><span class="s">""</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;article</span> <span class="na">class=</span><span class="s">"paper"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;h1</span> <span class="na">id=</span><span class="s">"ruby-monstas"</span><span class="nt">&gt;</span>Ruby Monstas<span class="nt">&lt;/h1&gt;</span>
+        <span class="nt">&lt;p&gt;</span>Ruby Monstas stands for <span class="nt">&lt;em&gt;</span>(Berlin) Ruby Monday Study Group’stas<span class="nt">&lt;/em&gt;</span>, and this is
+        our homepage.<span class="nt">&lt;/p&gt;</span>
+        ...
+</code></pre>
+
+<p>Wohoo! Very cool.</p>
+
+<p>We can see the full HTML just like we saw it in our Rack::Test based tests.
+So we could now run some assertions against it, and test the website.</p>
+
+<p>This is roughly how testing a web application using a headless browser works.</p>
+
+<ul>
+<li>Instead of navigating to an external website (like our homepage) you&rsquo;d
+navigate to the app that is started locally, just like you&rsquo;d start it when
+you navigate around during development.</li>
+<li>Instead of manually typing Javascript we use another Ruby library in order
+to talk to Phantom.js and instruct it to do the things that we want to test.</li>
+<li>We can then inspect the resulting website, and see if the HTML elements that
+we expect are there. Except this time (unlike Rack::Test based tests) we&rsquo;d
+see the output that the browser actually displays, including Javascript and
+CSS applied.</li>
+</ul>
+
+<p>Does that make sense?</p>
+
+        <nav class="page-nav"><a class="prev" href="/headless.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/headless/capybara.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="../assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="../assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>

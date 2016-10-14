@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Capybara | Testing for Beginners</title>
+
+    <link href="../assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/headless/phantomjs.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/headless/features.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li>
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li>
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory expanded">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li>
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li class="active">
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li>
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Capybara</h1>
+
+<p><em>A DSL for testing web applications</em></p>
+
+<p>Now, we want to test a Ruby application, and we don&rsquo;t really want to write
+a lot of Javascript code in order to do so.</p>
+
+<p>And the Javascript code we would have to write actually is quite a bit of a
+hassle, unless we use a bunch of libraries. For example, it&rsquo;s not even very
+easy to click on a link in a browser through plain Javascript. That&rsquo;s because
+the document object model (DOM), as defined by the W3C is quite an odd
+construct.</p>
+
+<p>The code for clicking on a link might look something like this:</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">element</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"a[href='/location.html']"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s2">"MouseEvents"</span><span class="p">);</span>
+<span class="nx">event</span><span class="p">.</span><span class="nx">initMouseEvent</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nb">window</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+<span class="nx">element</span><span class="p">.</span><span class="nx">dispatchEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+</code></pre>
+
+<p>That&rsquo;s right. One does not just &ldquo;click&rdquo;. One creates a mouse event, sets it up
+with tons of options, and then &ldquo;dispatches&rdquo; it on the element.</p>
+
+<p>Luckily there are Ruby libraries to help with this kind of stuff. The probably
+most widely used one is <a href="http://jnicklas.github.io/capybara/">Capybara</a>.</p>
+
+<p>That&rsquo;s right. Capybara maybe has the most badass mascot animal of all open
+source libraries.</p>
+
+<p>It also defines a <a href="https://github.com/jnicklas/capybara#the-dsl">DSL</a> for
+describing interactions with web pages. The DSL includes handy methods such
+as:</p>
+<pre class="highlight ruby"><code><span class="n">visit</span> <span class="s2">"/members"</span>                <span class="c1"># go to a URL</span>
+<span class="n">click_on</span> <span class="s2">"Add member"</span>           <span class="c1"># click on a link</span>
+<span class="n">fill_in</span> <span class="s2">"Name"</span><span class="p">,</span> <span class="ss">with: </span><span class="s2">"Monsta!"</span> <span class="c1"># fill in a form field</span>
+<span class="n">click_on</span> <span class="s2">"Submit"</span>               <span class="c1"># submit the form</span>
+</code></pre>
+
+<p>Now that looks a little more handy.</p>
+
+<p>With Capybara you can easily inspect the HTML of a page, find elements
+(remember how we added another gem <code>rspec-html-matchers</code>? Capybara brings
+similar functionality), interact with the page by clicking around, filling in
+form fields, submitting forms etc. You can also evaluate Javascript on the page
+(in order to simulate certain things), work with native browser alert windows,
+and a lot more. You can even take screenshots, even though there&rsquo;s no browser
+window.</p>
+
+<p>How does Capybara know how to talk to Phantom.js though?</p>
+
+<p>As mentioned there are a lot of different headless browsers, and Capybara can
+talk to some of them. In order to do so Capybara uses &ldquo;drivers&rdquo;. And the driver
+for talking to Phantom.js is called <a href="https://github.com/teampoltergeist/poltergeist">Poltergeist</a>,
+because a name like <code>CapybaraPhantomjsDriver</code> would have been too boring.</p>
+
+<p>Anyway, we want to install both gems:</p>
+<pre class="highlight plaintext"><code>$ gem install capybara poltergeist
+</code></pre>
+
+<p>Let&rsquo;s try it out!</p>
+
+<p>Create a file <code>capybara.rb</code> and add the following:</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'capybara/poltergeist'</span>
+
+<span class="no">Capybara</span><span class="p">.</span><span class="nf">default_driver</span> <span class="o">=</span> <span class="ss">:poltergeist</span>
+
+<span class="n">browser</span> <span class="o">=</span> <span class="no">Capybara</span><span class="p">.</span><span class="nf">current_session</span>
+<span class="n">browser</span><span class="p">.</span><span class="nf">visit</span> <span class="s1">'http://rubymonstas.org'</span>
+<span class="nb">puts</span> <span class="n">browser</span><span class="p">.</span><span class="nf">html</span>
+</code></pre>
+
+<p>Awesome. Again, that prints out the HTML of our homepage.</p>
+
+<p>Now, let&rsquo;s click on a link:</p>
+<pre class="highlight ruby"><code><span class="n">browser</span> <span class="o">=</span> <span class="no">Capybara</span><span class="p">.</span><span class="nf">current_session</span>
+<span class="n">browser</span><span class="p">.</span><span class="nf">visit</span> <span class="s1">'http://rubymonstas.org'</span>
+<span class="n">browser</span><span class="p">.</span><span class="nf">click_on</span> <span class="s1">'Ganz oben office'</span>
+<span class="nb">puts</span> <span class="n">browser</span><span class="p">.</span><span class="nf">text</span>
+</code></pre>
+
+<p>That prints out:</p>
+<pre class="highlight plaintext"><code>Where we meet How to get to the office space where we meet (the former Travis CI office).
+...
+</code></pre>
+
+<p>As you can see we&rsquo;ve successfully navigated to another page, and now look at
+the plain text of that other.</p>
+
+<p>If we want to make our test not depend on the link text (because that might
+change at any time) then we can also use XPath or CSS <a href="http://ejohn.org/blog/xpath-css-selectors/">selectors</a>.</p>
+
+<p>CSS selectors are a little more common because many developers already know
+them from CSS and Javascript (e.g. JQuery). XPath selectors on the other hand
+are even more powerful.</p>
+
+<p>For example, this CSS selector says &ldquo;select the <code>a</code> tag that has the attribute
+<code>href=&quot;/location.html&quot;</code>.</p>
+<pre class="highlight ruby"><code><span class="n">browser</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'a[href="/location.html"]'</span><span class="p">).</span><span class="nf">click</span>
+</code></pre>
+
+        <nav class="page-nav"><a class="prev" href="/headless/phantomjs.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/headless/features.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="../assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="../assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Testing for Beginners">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="BEd2YAbpSQrRqU2-5wUifTTzvqTMGLLE269b0JZTfCs" />
+
+    <title>Feature tests | Testing for Beginners</title>
+
+    <link href="../assets/stylesheets/monstas-fe625f69.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon-870787d6.png" />
+  </head>
+
+  <body>
+    <nav class="page-nav"><a class="prev" href="/headless/capybara.html">
+  Previous
+</a></nav>
+    <nav class="page-nav"><a class="next" href="/test_doubles.html">
+  Next
+</a></nav>
+
+    <div>
+      <nav class="toc">
+        <h1>Contents</h1>
+        <ul>
+  <li>
+    <a href="/index.html">
+      Testing For Beginners
+    </a>
+  </li>
+  <li>
+    <a href="/preface.html">
+      Preface
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/testing.html">
+      Testing Code
+    </a>
+    <ul>
+      <li>
+        <a href="/testing/output.html">
+          Testing via output
+        </a>
+      </li>
+      <li>
+        <a href="/testing/separation.html">
+          Separating test code
+        </a>
+      </li>
+      <li>
+        <a href="/testing/computed.html">
+          Computed tests
+        </a>
+      </li>
+      <li>
+        <a href="/testing/assert.html">
+          Assertions
+        </a>
+      </li>
+      <li>
+        <a href="/testing/stages.html">
+          Stages of a test
+        </a>
+      </li>
+      <li>
+        <a href="/testing/classes.html">
+          Test Classes
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/libraries.html">
+      Libraries
+    </a>
+  </li>
+  <li>
+    <a href="/minitest.html">
+      Minitest
+    </a>
+  </li>
+  <li class="directory">
+    <a href="/rspec.html">
+      RSpec
+    </a>
+    <ul>
+      <li>
+        <a href="/rspec/basics.html">
+          Basic Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/matchers.html">
+          Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/format.html">
+          Format
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/advanced.html">
+          Advanced Usage
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/custom_matchers.html">
+          Custom Matchers
+        </a>
+      </li>
+      <li>
+        <a href="/rspec/filtering.html">
+          Filtering
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory">
+    <a href="/rack_test.html">
+      Rack::Test
+    </a>
+    <ul>
+      <li>
+        <a href="/rack_test/rack.html">
+          Testing a Rack app
+        </a>
+      </li>
+      <li>
+        <a href="/rack_test/sinatra.html">
+          Testing a Sinatra app
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li class="directory expanded">
+    <a href="/headless.html">
+      Headless browsers
+    </a>
+    <ul>
+      <li>
+        <a href="/headless/phantomjs.html">
+          Phantom.js
+        </a>
+      </li>
+      <li>
+        <a href="/headless/capybara.html">
+          Capybara
+        </a>
+      </li>
+      <li class="active">
+        <a href="/headless/features.html">
+          Feature tests
+        </a>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="/test_doubles.html">
+      Test doubles
+    </a>
+  </li>
+  <li>
+    <a href="/analysis.html">
+      Code Analysis
+    </a>
+  </li>
+  <li>
+    <a href="/services.html">
+      Services
+    </a>
+  </li>
+</ul>
+      </nav>
+      <article>
+        <nav class="menu"><a href="#"></a></nav>
+        <h1>Feature tests</h1>
+
+<p><em>Telling user stories</em></p>
+
+<p>Tests that use Capybara or similar libraries, and tests that use a headless
+browser, often have a slightly different format from the tests that we&rsquo;ve
+written so far.</p>
+
+<p>These tests tell stories per test, they explain the features that our app has,
+and that our users care about.</p>
+
+<p>For example, for our <code>members</code> app, we explain:</p>
+
+<p>When I go to the members list, click the link &ldquo;New member&rdquo;, fill in the name,
+and click submit, then I want the member details page for this new member to be
+shown, with a confirmation message.</p>
+
+<p>This is also called a user story. Tests that implement such stories are called
+feature tests. [1]</p>
+
+<p>We&rsquo;ll write some feature tests for our <code>members</code> app, and then later discuss
+the differences to the Rack::Test based tests that we&rsquo;ve written for this app
+before.</p>
+
+<h2>Specification</h2>
+
+<p>Let&rsquo;s write down our user stories first.</p>
+
+<p>This way we can focus on them, and figure out the implementation later. Also,
+we&rsquo;ll know exactly how much work we still have in front of us.</p>
+
+<ul>
+<li><p>Listing all members: When I go to the members list then I want to see a list
+of all members, linking to their details page, and links to edit and remove
+the member.</p></li>
+<li><p>Showing member details: When I go to the members list, and I click on a
+member name, then I want the member&rsquo;s details page to be shown, displaying
+their name.</p></li>
+<li><p>Creating a new member: When I go to the members list, click the link &ldquo;New
+member&rdquo;, fill in the name, and click submit, then I want the member details
+page for this new member to be shown, with a confirmation message.</p></li>
+<li><p>Editing a member: When I go to the members list, click the &ldquo;Edit&rdquo; link for a
+member, change their name, and click submit, then I want the member details
+page for this member to be shown, displaying their new name, with a
+confirmation message.</p></li>
+<li><p>Removing a member: When I go to the members list, click the &ldquo;Remove&rdquo; link
+for a member, and confirm, then I want the members list to be shown, with
+the member removed, and a confirmation message.</p></li>
+</ul>
+
+<p>Does this make sense?</p>
+
+<p>We think this describes the functionality of our little application fairly
+well, from the perspective of a user.</p>
+
+<p>And unsurprisingly we have 5 stories. These correspond to the 5 groups of
+routes on a typical <a href="http://webapps-for-beginners.rubymonstas.org/resources/groups_routes.html">resource</a>.</p>
+
+<h2>Test setup</h2>
+
+<p>Ok, let&rsquo;s get started.</p>
+
+<p>We&rsquo;ll want our <code>spec_helper.rb</code> file to look like this. For now you can also
+just stick it to the top of your test file. Let&rsquo;s call it <code>feature_spec.rb</code>.</p>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s2">"app"</span>
+<span class="nb">require</span> <span class="s1">'capybara/dsl'</span>
+<span class="nb">require</span> <span class="s1">'capybara/poltergeist'</span>
+
+<span class="no">Capybara</span><span class="p">.</span><span class="nf">default_driver</span> <span class="o">=</span> <span class="ss">:poltergeist</span>
+<span class="no">Capybara</span><span class="p">.</span><span class="nf">app</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="no">App</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="no">RSpec</span><span class="p">.</span><span class="nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">include</span> <span class="no">Capybara</span><span class="o">::</span><span class="no">DSL</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>As you can see we need to require both Capybara&rsquo;s DSL and the Poltergeist
+driver. We then tell Capybara to use Poltergeist as a driver, and tell RSpec to
+include the DSL into our tests, so we can use these methods.</p>
+
+<p>The line <code>Capybara.app = proc { |env| App.new.call(env) }</code> tells Capybara
+how to call our app. This is the equivalent of the <code>let(:app)</code> statement in
+our Rack::Test based tests: The test libararies we use do not know about
+our app, and how to create or call it, so we have to tell them.</p>
+
+<p>Also, while we&rsquo;re at it, let&rsquo;s make sure our <code>members.txt</code> file does not
+leak state again, and add this to our configuration:</p>
+<pre class="highlight ruby"><code>  <span class="n">config</span><span class="p">.</span><span class="nf">before</span> <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s2">"members.txt"</span><span class="p">,</span> <span class="s2">"Anja</span><span class="se">\n</span><span class="s2">Maren</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
+
+<p>We&rsquo;ve had this in a <code>before</code> block in our tests before. Moving it to our
+general RSpec configuration is a sensible choice, too. This way we make
+sure that we don&rsquo;t forget about it.</p>
+
+<h2>Test implementation</h2>
+
+<p>Ok, now we&rsquo;re ready to write our first feature test.</p>
+
+<p>Remember how we&rsquo;ve used <code>browser.visit</code> when we played with Capybara?
+The Capybara DSL that we&rsquo;ve included to our RSpec tests allows us to
+just directly call these methods without using <code>browser</code>:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:links</span><span class="p">)</span> <span class="p">{</span> <span class="n">page</span><span class="p">.</span><span class="nf">all</span><span class="p">(</span><span class="s1">'li'</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">li</span><span class="o">|</span> <span class="n">li</span><span class="p">.</span><span class="nf">all</span><span class="p">(</span><span class="s1">'a'</span><span class="p">).</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:text</span><span class="p">)</span> <span class="p">}</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s2">"listing members"</span> <span class="k">do</span>
+    <span class="n">visit</span> <span class="s2">"/members"</span>
+    <span class="nb">puts</span> <span class="n">page</span><span class="p">.</span><span class="nf">html</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>Awesome, this outputs the HTML from our members <code>index</code> page, just as
+expected.</p>
+
+<p>Let&rsquo;s make sure that the links are all there. We&rsquo;ll just test for the
+link texts for now:</p>
+<pre class="highlight ruby"><code><span class="n">describe</span> <span class="no">App</span> <span class="k">do</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:links</span><span class="p">)</span> <span class="p">{</span> <span class="n">within</span><span class="p">(</span><span class="s1">'ul'</span><span class="p">)</span> <span class="p">{</span> <span class="n">page</span><span class="p">.</span><span class="nf">all</span><span class="p">(</span><span class="s1">'a'</span><span class="p">).</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:text</span><span class="p">)</span> <span class="p">}</span> <span class="p">}</span>
+
+  <span class="n">it</span> <span class="s2">"listing members"</span> <span class="k">do</span>
+    <span class="n">visit</span> <span class="s2">"/members"</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">links</span><span class="p">).</span><span class="nf">to</span> <span class="n">eq</span> <span class="p">[</span><span class="s1">'Anja'</span><span class="p">,</span> <span class="s1">'Edit'</span><span class="p">,</span> <span class="s1">'Remove'</span><span class="p">,</span> <span class="s1">'Maren'</span><span class="p">,</span> <span class="s1">'Edit'</span><span class="p">,</span> <span class="s1">'Remove'</span><span class="p">]</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>Ok, how do we look up those links there?</p>
+
+<p><code>within</code> expects a CSS selector. In our case we select the <code>ul</code> tag. Inside
+that tag we then look for all <code>a</code> tags, and return the text (content) of each
+tag. I.e. we end up with an array that has the texts of all links in our <code>ul</code>
+tag.</p>
+
+<p>That seems like a good way to make sure all the links are there. We&rsquo;ll want
+to check their <code>href</code> attribute, too, but we can leave that for the following
+tests that will click these links.</p>
+
+<p>Hmmm, isn&rsquo;t that a little brittle though? What if we decide to change our
+HTML at some point, and not use a <code>ul</code> tag any more. Maybe we&rsquo;d use a <code>table</code>
+or some other tag. Our app would still function the same, but our tests would
+now fail.</p>
+
+<p>Unfortunately our HTML does not give a lot of clues what&rsquo;s what. There&rsquo;s no
+way to identify the list of members, other than looking for the <code>ul</code> tag.</p>
+
+<p>One good way of dealing with this is to use a HTML <code>id</code>. In HTML an <code>id</code> is a
+unique identifier on a page, and it can be used to &hellip; well, identify that
+element.</p>
+
+<p>So, let&rsquo;s change our <code>index.erb</code> view to add that <code>id</code>:</p>
+<pre class="highlight erb"><code><span class="nt">&lt;ul</span> <span class="na">id=</span><span class="s">"members"</span><span class="nt">&gt;</span>
+  ...
+<span class="nt">&lt;/ul&gt;</span>
+</code></pre>
+
+<p>That seems good. An <code>ul</code> is a list, and we call it <code>members</code>. Pretty
+straightforward.</p>
+
+<p>Now we can change our tests to look for the element with the <code>members</code> id.
+Since we&rsquo;re using a CSS selector here, <code>#members</code> selects our list.</p>
+<pre class="highlight ruby"><code>  <span class="n">let</span><span class="p">(</span><span class="ss">:links</span><span class="p">)</span> <span class="p">{</span> <span class="n">within</span><span class="p">(</span><span class="s1">'#members'</span><span class="p">)</span> <span class="p">{</span> <span class="n">page</span><span class="p">.</span><span class="nf">all</span><span class="p">(</span><span class="s1">'a'</span><span class="p">).</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:text</span><span class="p">)</span> <span class="p">}</span> <span class="p">}</span>
+</code></pre>
+
+<p>That&rsquo;s better.</p>
+
+<p>Let&rsquo;s implement the next story.</p>
+<pre class="highlight ruby"><code>  <span class="n">it</span> <span class="s2">"showing member details"</span> <span class="k">do</span>
+    <span class="c1"># go to the members list</span>
+    <span class="n">visit</span> <span class="s2">"/members"</span>
+
+    <span class="c1"># click on the link</span>
+    <span class="n">click_on</span> <span class="s2">"Maren"</span>
+
+    <span class="c1"># check the h1 tag</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">page</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_css</span> <span class="s1">'h1'</span><span class="p">,</span> <span class="ss">text: </span><span class="s1">'Member: Maren'</span>
+
+    <span class="c1"># check the name</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">page</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_content</span> <span class="s1">'Name: Maren'</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>See the pattern? We go to the members list, click the respective link, and then
+we can assert that the page shows the contents we care about.</p>
+
+<p>We&rsquo;re using the <code>have_css</code> and <code>have_content</code> matchers here. Again, <code>have_css</code>
+expects a CSS selector, and <code>h1</code> simply selects the element with this tag name.
+We then also specify the content that we expect on this <code>h1</code> tag. There&rsquo;s no
+matcher for expecting various elements on the page at once, which is why we
+had to find and check the links on the members list manually in our first test.</p>
+
+<p>Ok, let&rsquo;s try the next story:</p>
+<pre class="highlight ruby"><code>  <span class="n">it</span> <span class="s2">"creating a new member"</span> <span class="k">do</span>
+    <span class="c1"># go to the members list</span>
+    <span class="n">visit</span> <span class="s2">"/members"</span>
+
+    <span class="c1"># click on the link</span>
+    <span class="n">click_on</span> <span class="s2">"New Member"</span>
+
+    <span class="c1"># fill in the form</span>
+    <span class="n">fill_in</span> <span class="s2">"name"</span><span class="p">,</span> <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">"Monsta"</span>
+
+    <span class="c1"># submit the form</span>
+    <span class="n">find</span><span class="p">(</span><span class="s1">'input[type=submit]'</span><span class="p">).</span><span class="nf">click</span>
+
+    <span class="c1"># check the current path</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">page</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_current_path</span> <span class="s2">"/members/Monsta"</span>
+
+    <span class="c1"># check the message</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">page</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_content</span> <span class="s1">'Successfully saved the new member: Monsta.'</span>
+
+    <span class="c1"># check the h1 tag</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">page</span><span class="p">).</span><span class="nf">to</span> <span class="n">have_css</span> <span class="s1">'h1'</span><span class="p">,</span> <span class="ss">text: </span><span class="s1">'Member: Monsta'</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>Woha. This actually works, our test passes.</p>
+
+<p>You see that, after navigating to the &ldquo;new member&rdquo; page, filling in the form,
+and submitting it, we can assert that we&rsquo;re now looking at the right path, and
+there&rsquo;s a confirmation message, and the right <code>h1</code> tag on the page.</p>
+
+<p>However, if you look closely, when we select the input tag to fill in, we need
+to use the actual name attribute of that input tag (which happens to be <code>name</code>
+in our case).</p>
+
+<p>We said we wanted to forumate tests in a way that they reflect what our users
+see, and care about, right? They don&rsquo;t see the name attribute of an input tag
+at all.</p>
+
+<p>Our test tells us something about our HTML here: There&rsquo;s no way for the user
+to know what the input field is for.</p>
+
+<p>Also, in the next line, we select the submit button with <code>find(&#39;input[type=submit]&#39;)</code>.
+This, again, is a CSS selector that selects an input tag that has the attribute
+<code>type</code> set to <code>submit</code>.</p>
+
+<p>That&rsquo;s the same problem, isn&rsquo;t it? The user does not see the <code>type</code> attribute,
+and they don&rsquo;t care about it.</p>
+
+<p>Let&rsquo;s fix that.</p>
+
+<p>In HTML the right way to name an input field is adding a <code>label</code> tag. A label
+tag has a <code>for</code> attribute that identifies the input field it is, well, for.
+This way software, i.e. browsers, screenreaders, but also our tests, can
+identify the field.</p>
+
+<p>Adding labels to form elements generally is a good idea in web development.
+So let&rsquo;s add a label to our <code>new.erb</code>, and <code>edit.erb</code> views:</p>
+<pre class="highlight erb"><code>  <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">"name"</span><span class="nt">&gt;</span>Name<span class="nt">&lt;/label&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">id=</span><span class="s">"name"</span> <span class="na">name=</span><span class="s">"name"</span> <span class="na">value=</span><span class="s">"</span><span class="cp">&lt;%=</span> <span class="vi">@member</span><span class="p">.</span><span class="nf">name</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+</code></pre>
+
+<p>You can see how the <code>for</code> attribute of the <code>label</code> tag relates to the <code>id</code>
+attribute of the <code>input</code> tag. Here is the specification for <code>for</code> on
+<a href="https://developer.mozilla.org/en/docs/Web/HTML/Element/label#attr-for">MDN</a>
+(a great resource about all things HTML).</p>
+
+<p>While we&rsquo;re at it, let&rsquo;s also add a <code>value</code> attribute to the <code>submit</code> input tag
+in both forms. This tells the browser to display a certain value to the user.</p>
+<pre class="highlight erb"><code>  <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"Save"</span><span class="nt">&gt;</span>
+</code></pre>
+
+<p>Great.</p>
+
+<p>Now we can change our tests to use the actual texts that the user sees on the
+page:</p>
+<pre class="highlight ruby"><code>    <span class="c1"># fill in the form</span>
+    <span class="n">fill_in</span> <span class="s2">"Name"</span><span class="p">,</span> <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">"Monsta"</span>
+
+    <span class="c1"># submit the form</span>
+    <span class="n">click_on</span> <span class="s2">"Save"</span>
+</code></pre>
+
+<p>Awesome.</p>
+
+<p>Our tests now really read like a story about our user&rsquo;s experience, except,
+maybe when we assert the current path. This one is debateable:</p>
+
+<p>On one hand users can see that path in the URL in their browser. On the other
+hand most users usually don&rsquo;t really care about it, and often don&rsquo;t look at it.</p>
+
+<p>We&rsquo;ll just keep this assertion because it helps us express in our tests which
+page we expect to be on.</p>
+
+<p>How about you go ahead and try to fill in the two remaining user stories. That
+seems like a great exercise at this point.</p>
+
+<p>Doing so you&rsquo;ll want to select a specific &ldquo;Edit&rdquo; link, and then later a &ldquo;Remove&rdquo;
+link.</p>
+
+<p>The Capybara <a href="http://www.rubydoc.info/github/jnicklas/capybara/Capybara/Node/Actions#click_link_or_button-instance_method">documentation</a>
+does not mention this for some reason, but there&rsquo;s an option <code>match: :first</code>
+that you can pass to the <code>click_on</code> method (e.g. <code>click_on &quot;Edit&quot;, match:
+:first</code>). This will click the first matching link.</p>
+
+<p>Have fun!</p>
+
+<h2>Footnotes</h2>
+
+<p>[1] In the short history of software development the semantics of testing, and
+terms for various kinds of tests, have changed a lot. If you ask 10 different
+developers to define the most important kinds of tests you&rsquo;ll probably get 10
+different lists of definitions.</p>
+
+        <nav class="page-nav"><a class="prev" href="/headless/capybara.html">
+  Previous
+</a></nav>
+        <nav class="page-nav"><a class="next" href="/test_doubles.html">
+  Next
+</a></nav>
+      </article>
+    </div>
+
+    <footer>
+      <ul>
+        <li><a href="http://rubymonstas.org">Ruby Monstas</a></li>
+        <li><a href="http://ruby-for-beginners.rubymonstas.org">Ruby For Beginners</a></li>
+        <li><a href="http://webapps-for-beginners.rubymonstas.org">Webapps For Beginners</a></li>
+        <li><a href="http://testing-for-beginners.rubymonstas.org">Testing For Beginners</a></li>
+        <li><a href="mailto:ruby.monsters@gmail.com">Email</a></li>
+        <li><a href="https://twitter.com/rubymonsters">Twitter</a></li>
+        <li><a href="https://github.com/rubymonsters">GitHub</a></li>
+        <li><a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="license cc:license">License</a></li>
+        <li><a href="http://foundation.travis-ci.org/imprint/">Imprint</a></li>
+      </ul>
+    </footer>
+
+    <script src="../assets/javascripts/modernizr-4c875d94.js" type="text/javascript"></script>
+    <script src="../assets/javascripts/monstas-79961449.js" type="text/javascript"></script>
+  </body>
+</html>
