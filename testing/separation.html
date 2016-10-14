@@ -203,13 +203,13 @@ leap_year.rb</code> then you&rsquo;ll get the same output as above.</p>
 else) then you would not get this output.</p>
 
 <p>You can try this out quickly on the command line:</p>
-<pre class="highlight plaintext"><code>$ ruby -r leap_year.rb -e "p leap_year?(1996)"
+<pre class="highlight plaintext"><code>$ ruby -I -r leap_year.rb -e "p leap_year?(1996)"
 true
 </code></pre>
 
-<p>The flag <code>-r</code> tells Ruby to require your file. The flag <code>-e</code> tells it to
-execute the given code. This way you don&rsquo;t have to create a new file in order
-to try this out.</p>
+<p>The flag <code>-r</code> tells Ruby to require your file. The flag <code>-I</code> tells it to look 
+in the current directory to load the file. The flag <code>-e</code> tells it to execute 
+the given code.  This way you don&rsquo;t have to create a new file in order to try this out.</p>
 
 <p>As you can see it now won&rsquo;t execute your &ldquo;test&rdquo;, and thus won&rsquo;t output <code>2004:
 true</code> again.</p>
